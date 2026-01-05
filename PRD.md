@@ -902,3 +902,69 @@ bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/holiday
 |------|----------|------|
 | 拆分 HolidayService | 增加複雜計算邏輯時 | 避免 God Object 反模式 |
 | 引入日期庫 | 日期處理需求增加時 | 考慮 `date-fns` 或 `dayjs` |
+
+### 10.4 年份支援架構建議 (Gemini 2026-01-05)
+
+#### 問題背景
+
+目前年份範圍使用硬編碼常數 `SUPPORTED_YEAR_RANGE`，每年需手動更新：
+- 常數定義 (`src/types/holiday.ts`)
+- 命令說明文字 (`'年份 (2017-2026)'`)
+- Shell completion 腳本
+
+資料來源 (TaiwanCalendar) 依慣例每年新增檔案：
+```
+https://cdn.jsdelivr.net/gh/ruyut/TaiwanCalendar/data/{year}.json
+```
+
+#### 方案比較
+
+| 方案 | 說明 | UX | 維護成本 | 推薦 |
+|------|------|-----|----------|------|
+| 樂觀請求 | 直接請求，404 時報錯 | ❌ 差 | 零 | ❌ |
+| **API 探索 + 快取** | 動態探索可用年份 | ✅ 佳 | 零 | ✅ |
+| 超大範圍 | 設 end=2099 | ⚠️ 不精準 | 低 | ❌ |
+
+#### 推薦方案：遠端 API 探索與本地快取
+
+**核心概念**：利用 jsDelivr API 動態探索可用年份，搭配本地快取提升效能。
+
+**API 端點**：
+```
+https://data.jsdelivr.net/gh/ruyut/TaiwanCalendar/data/
+```
+
+**實作架構**：
+
+```
+┌─────────────────┐     ┌──────────────┐     ┌─────────────────┐
+│   Commands      │────▶│  YearService │────▶│  jsDelivr API   │
+│   Completion    │     │  (快取 24hr) │     │  (年份探索)     │
+└─────────────────┘     └──────────────┘     └─────────────────┘
+```
+
+**新增檔案**：
+- `src/services/year-service.ts` - 年份探索服務
+
+**實作步驟**：
+
+1. **建立 YearService**
+   - 呼叫 jsDelivr API 取得檔案列表
+   - 解析檔名取得可用年份
+   - 快取結果 (TTL: 24 小時)
+   - 提供 `getAvailableYears()` 和 `getSupportedYearRange()` 方法
+
+2. **更新相依模組**
+   - 移除 `SUPPORTED_YEAR_RANGE` 硬編碼常數
+   - 命令說明文字改為動態生成
+   - Shell completion 使用 YearService
+
+3. **錯誤處理**
+   - API 失敗時使用舊快取
+   - 無快取時回退到合理預設值
+
+**架構優勢**：
+- **SRP**：年份探索邏輯獨立封裝
+- **DRY**：單一資料來源，消除硬編碼
+- **零維護**：遠端新增年份後 CLI 自動支援
+- **UX 最佳**：精準的說明文字與自動完成
