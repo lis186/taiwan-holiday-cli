@@ -903,7 +903,7 @@ bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/holiday
 | 拆分 HolidayService | 增加複雜計算邏輯時 | 避免 God Object 反模式 |
 | 引入日期庫 | 日期處理需求增加時 | 考慮 `date-fns` 或 `dayjs` |
 
-### 10.4 年份支援架構建議 (Gemini 2026-01-05)
+### 10.4 年份支援架構建議 (Gemini 2026-01-05) ✅ 已完成
 
 #### 問題背景
 
@@ -968,3 +968,16 @@ https://data.jsdelivr.net/gh/ruyut/TaiwanCalendar/data/
 - **DRY**：單一資料來源，消除硬編碼
 - **零維護**：遠端新增年份後 CLI 自動支援
 - **UX 最佳**：精準的說明文字與自動完成
+
+#### 實作結果 (2026-01-05)
+
+| 項目 | 狀態 |
+|------|------|
+| `src/services/year-service.ts` | ✅ 建立 |
+| `tests/unit/services/year-service.test.ts` | ✅ 14 測試 |
+| 命令說明動態化 | ✅ stats, list, month, workdays |
+| Shell completion 動態化 | ✅ bash, zsh, fish |
+| 測試總數 | 257 passing |
+| 覆蓋率 | 94.98% |
+
+**Commit**: `560166d feat: implement YearService for dynamic year discovery (PRD 10.4)`
