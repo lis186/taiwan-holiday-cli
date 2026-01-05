@@ -33,7 +33,7 @@ npx taiwan-holiday-cli today
 holiday today
 
 # 查詢指定日期
-holiday 2025-10-10
+holiday 2026-10-10
 
 # 查詢明天
 holiday tomorrow
@@ -63,11 +63,11 @@ holiday next [count]        # 預設顯示 5 個
 ```bash
 # 查詢日期範圍內的假期
 holiday range <start> <end>
-holiday range 2025-01-01 2025-01-31
+holiday range 2026-01-01 2026-01-31
 
 # 查詢指定月份
 holiday month [year-month]
-holiday month 2025-10
+holiday month 2026-10
 ```
 
 ### 統計功能
@@ -75,19 +75,19 @@ holiday month 2025-10
 ```bash
 # 年度假期統計
 holiday stats <year>
-holiday stats 2025
+holiday stats 2026
 
 # 月份假期統計
 holiday stats <year> <month>
-holiday stats 2025 10
+holiday stats 2026 10
 
 # 計算工作天數
 holiday workdays <year-month>
-holiday workdays 2025-01
+holiday workdays 2026-01
 
 # 計算兩日期間的天數
 holiday between <start> <end>
-holiday between 2025-01-01 2025-01-31
+holiday between 2026-01-01 2026-01-31
 ```
 
 ### 其他命令
@@ -124,13 +124,13 @@ holiday completion fish     # Fish
 ```bash
 # Simple 格式（預設）
 holiday today
-# 2025-01-05 (日) 是假期：週末
+# 2026-01-05 (一) 是假期：週末
 
 # JSON 格式
 holiday today -f json
 # {
-#   "date": "2025-01-05",
-#   "week": "日",
+#   "date": "2026-01-05",
+#   "week": "一",
 #   "isHoliday": true,
 #   "description": ""
 # }
@@ -140,7 +140,7 @@ holiday today -f table
 # ┌────────────┬──────┬──────────┬──────┐
 # │ 日期       │ 星期 │ 是否假期 │ 說明 │
 # ├────────────┼──────┼──────────┼──────┤
-# │ 2025-01-05 │ 日   │ ✓        │ 週末 │
+# │ 2026-01-05 │ 一   │ ✓        │ 週末 │
 # └────────────┴──────┴──────────┴──────┘
 ```
 
@@ -156,9 +156,9 @@ holiday config set format json
 
 | 格式 | 範例 |
 |------|------|
-| ISO | `2025-01-01` |
-| 斜線 | `2025/01/01` |
-| 無分隔 | `20250101` |
+| ISO | `2026-01-01` |
+| 斜線 | `2026/01/01` |
+| 無分隔 | `20260101` |
 | 相對日期 | `today`, `tomorrow`, `yesterday` |
 | 自然語言 | `next monday`, `next friday` |
 

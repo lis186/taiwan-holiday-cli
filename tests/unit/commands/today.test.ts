@@ -37,7 +37,7 @@ describe('today command', () => {
 
     it('should execute action and output result', async () => {
       // Use shared mock data
-      const mockHoliday = { ...mockHolidayData.weekend, date: '20250105', week: '日' };
+      const mockHoliday = { ...mockHolidayData.weekend, date: '20260105', week: '一' };
       mockHolidayService.checkHoliday.mockResolvedValue(mockHoliday);
 
       const cmd = createTodayCommand();

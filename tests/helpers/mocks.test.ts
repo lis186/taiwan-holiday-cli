@@ -65,8 +65,8 @@ describe('test helpers', () => {
 
     it('should have correct holiday structure', () => {
       const holiday = mockHolidayData.nationalDay;
-      expect(holiday.date).toBe('20251010');
-      expect(holiday.week).toBe('五');
+      expect(holiday.date).toBe('20261010');
+      expect(holiday.week).toBe('六');
       expect(holiday.isHoliday).toBe(true);
       expect(holiday.description).toBe('國慶日');
     });

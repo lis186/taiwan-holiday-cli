@@ -28,25 +28,25 @@ describe('between command', () => {
 
   describe('formatBetweenResult', () => {
     it('should format stats in simple format', () => {
-      const result = formatBetweenResult(mockStats, '2025-01-01', '2025-01-10', 'simple');
-      expect(result).toContain('2025-01-01');
-      expect(result).toContain('2025-01-10');
+      const result = formatBetweenResult(mockStats, '2026-01-01', '2026-01-10', 'simple');
+      expect(result).toContain('2026-01-01');
+      expect(result).toContain('2026-01-10');
       expect(result).toContain('7');
       expect(result).toContain('工作天');
     });
 
     it('should format as JSON', () => {
-      const result = formatBetweenResult(mockStats, '2025-01-01', '2025-01-10', 'json');
+      const result = formatBetweenResult(mockStats, '2026-01-01', '2026-01-10', 'json');
       const parsed = JSON.parse(result);
-      expect(parsed.startDate).toBe('2025-01-01');
-      expect(parsed.endDate).toBe('2025-01-10');
+      expect(parsed.startDate).toBe('2026-01-01');
+      expect(parsed.endDate).toBe('2026-01-10');
       expect(parsed.workdays).toBe(7);
     });
 
     it('should format as table', () => {
-      const result = formatBetweenResult(mockStats, '2025-01-01', '2025-01-10', 'table');
-      expect(result).toContain('2025-01-01');
-      expect(result).toContain('2025-01-10');
+      const result = formatBetweenResult(mockStats, '2026-01-01', '2026-01-10', 'table');
+      expect(result).toContain('2026-01-01');
+      expect(result).toContain('2026-01-10');
       expect(result).toContain('工作天');
       expect(result).toContain('7');
     });
@@ -70,9 +70,9 @@ describe('between command', () => {
       mockHolidayService.getWorkdaysBetween.mockResolvedValue(mockStats);
 
       const cmd = createBetweenCommand();
-      await cmd.parseAsync(['node', 'test', '2025-01-01', '2025-01-10']);
+      await cmd.parseAsync(['node', 'test', '2026-01-01', '2026-01-10']);
 
-      expect(mockHolidayService.getWorkdaysBetween).toHaveBeenCalledWith('2025-01-01', '2025-01-10');
+      expect(mockHolidayService.getWorkdaysBetween).toHaveBeenCalledWith('2026-01-01', '2026-01-10');
       expect(mockConsoleLog).toHaveBeenCalled();
     });
 
@@ -86,7 +86,7 @@ describe('between command', () => {
       mockHolidayService.getWorkdaysBetween.mockResolvedValue(mockStats);
 
       const cmd = createBetweenCommand();
-      await cmd.parseAsync(['node', 'test', '2025-01-01', '2025-01-10', '--workdays']);
+      await cmd.parseAsync(['node', 'test', '2026-01-01', '2026-01-10', '--workdays']);
 
       expect(mockConsoleLog).toHaveBeenCalledWith('7');
     });

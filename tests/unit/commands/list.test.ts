@@ -15,10 +15,10 @@ vi.mock('../../../src/services/holiday-service.js', () => ({
 
 describe('list command', () => {
   const mockHolidays: Holiday[] = [
-    { date: '20250101', week: '三', isHoliday: true, description: '開國紀念日' },
-    { date: '20250128', week: '二', isHoliday: true, description: '春節' },
-    { date: '20251010', week: '五', isHoliday: true, description: '國慶日' },
-    { date: '20250927', week: '六', isHoliday: false, description: '補行上班日' },
+    { date: '20260101', week: '四', isHoliday: true, description: '開國紀念日' },
+    { date: '20260217', week: '二', isHoliday: true, description: '春節' },
+    { date: '20261010', week: '六', isHoliday: true, description: '國慶日' },
+    { date: '20260926', week: '六', isHoliday: false, description: '補行上班日' },
   ];
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('list command', () => {
     describe('simple format', () => {
       it('should format holidays in simple format', () => {
         const result = formatListResult(mockHolidays, 'simple', { holidaysOnly: false });
-        expect(result).toContain('2025-01-01');
+        expect(result).toContain('2026-01-01');
         expect(result).toContain('開國紀念日');
         expect(result).toContain('國慶日');
       });
@@ -103,9 +103,9 @@ describe('list command', () => {
       mockHolidayService.getHolidaysForYear.mockResolvedValue(mockHolidays);
 
       const cmd = createListCommand();
-      await cmd.parseAsync(['node', 'test', '2025']);
+      await cmd.parseAsync(['node', 'test', '2026']);
 
-      expect(mockHolidayService.getHolidaysForYear).toHaveBeenCalledWith(2025);
+      expect(mockHolidayService.getHolidaysForYear).toHaveBeenCalledWith(2026);
       expect(mockConsoleLog).toHaveBeenCalled();
     });
   });
@@ -130,15 +130,16 @@ describe('list command', () => {
 
   describe('formatListResult with groupBy', () => {
     const yearHolidays: Holiday[] = [
-      { date: '20250101', week: '三', isHoliday: true, description: '開國紀念日' },
-      { date: '20250111', week: '六', isHoliday: true, description: '' },
-      { date: '20250128', week: '二', isHoliday: true, description: '春節' },
-      { date: '20251010', week: '五', isHoliday: true, description: '國慶日' },
+      { date: '20260101', week: '四', isHoliday: true, description: '開國紀念日' },
+      { date: '20260111', week: '日', isHoliday: true, description: '' },
+      { date: '20260217', week: '二', isHoliday: true, description: '春節' },
+      { date: '20261010', week: '六', isHoliday: true, description: '國慶日' },
     ];
 
     it('should group by month in simple format', () => {
       const result = formatListResult(yearHolidays, 'simple', { holidaysOnly: true, groupBy: 'month' });
       expect(result).toContain('一月');
+      expect(result).toContain('二月');
       expect(result).toContain('十月');
     });
 
@@ -147,6 +148,7 @@ describe('list command', () => {
       const parsed = JSON.parse(result);
       expect(parsed.groups).toBeDefined();
       expect(Object.keys(parsed.groups)).toContain('01');
+      expect(Object.keys(parsed.groups)).toContain('02');
       expect(Object.keys(parsed.groups)).toContain('10');
     });
   });

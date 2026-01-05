@@ -42,37 +42,37 @@ export function createMockHolidayService() {
  */
 export const mockHolidayData = {
   nationalDay: {
-    date: '20251010',
-    week: '五',
+    date: '20261010',
+    week: '六',
     isHoliday: true,
     description: '國慶日',
   },
   newYear: {
-    date: '20250101',
-    week: '三',
+    date: '20260101',
+    week: '四',
     isHoliday: true,
     description: '開國紀念日',
   },
   lunarNewYear: {
-    date: '20250128',
+    date: '20260217',
     week: '二',
     isHoliday: true,
     description: '春節',
   },
   makeupWorkday: {
-    date: '20250927',
+    date: '20260926',
     week: '六',
     isHoliday: false,
     description: '補行上班日',
   },
   weekend: {
-    date: '20250104',
-    week: '六',
+    date: '20260104',
+    week: '日',
     isHoliday: true,
     description: '',
   },
   workday: {
-    date: '20250106',
+    date: '20260105',
     week: '一',
     isHoliday: false,
     description: '',
@@ -84,7 +84,7 @@ export const mockHolidayData = {
  */
 export const mockStatsData = {
   yearStats: {
-    year: 2025,
+    year: 2026,
     totalHolidays: 115,
     nationalHolidays: 113,
     compensatoryDays: 2,
@@ -93,7 +93,7 @@ export const mockStatsData = {
     holidayTypes: { '國慶日': 3 },
   },
   monthStats: {
-    year: 2025,
+    year: 2026,
     month: 10,
     totalHolidays: 9,
     nationalHolidays: 8,
@@ -115,6 +115,6 @@ export const mockStatsData = {
  */
 export const mockCacheStatus = {
   itemCount: 2,
-  items: ['holidays_2024', 'holidays_2025'],
+  items: ['holidays_2025', 'holidays_2026'],
   hitRate: 0.85,
 };
