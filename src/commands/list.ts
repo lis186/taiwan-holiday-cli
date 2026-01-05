@@ -3,6 +3,7 @@ import Table from 'cli-table3';
 import { getHolidayService } from '../services/holiday-service.js';
 import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
+import { getYearArgumentDescription } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
 
 /**
@@ -165,7 +166,7 @@ function formatGroupedByMonth(holidays: Holiday[], format: OutputFormat): string
 export function createListCommand(): Command {
   const cmd = new Command('list')
     .description('列出指定年份的所有假期')
-    .argument('<year>', '年份 (2017-2026)')
+    .argument('<year>', getYearArgumentDescription())
     .option('-f, --format <format>', '輸出格式 (simple | json | table)', 'simple')
     .option('--holidays-only', '只顯示假期（不含補班日）')
     .option('--group-by <type>', '分組方式 (month)')

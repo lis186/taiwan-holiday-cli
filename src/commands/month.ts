@@ -3,6 +3,7 @@ import Table from 'cli-table3';
 import { getHolidayService } from '../services/holiday-service.js';
 import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
+import { getYearArgumentDescription } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
 
 /**
@@ -69,7 +70,7 @@ export function formatMonthResult(
 export function createMonthCommand(): Command {
   const cmd = new Command('month')
     .description('列出指定月份的假期')
-    .argument('<year>', '年份 (2017-2026)')
+    .argument('<year>', getYearArgumentDescription())
     .argument('<month>', '月份 (1-12)')
     .option('-f, --format <format>', '輸出格式 (simple | json | table)', 'simple')
     .action(async (year: string, month: string, options: { format: OutputFormat }) => {

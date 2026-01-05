@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Table from 'cli-table3';
 import { getHolidayService } from '../services/holiday-service.js';
 import type { HolidayStats } from '../types/holiday.js';
+import { getYearArgumentDescription } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
 
 /**
@@ -46,7 +47,7 @@ export function formatStatsResult(stats: HolidayStats, format: OutputFormat): st
 export function createStatsCommand(): Command {
   const cmd = new Command('stats')
     .description('查詢假期統計資訊')
-    .argument('<year>', '年份 (2017-2026)')
+    .argument('<year>', getYearArgumentDescription())
     .argument('[month]', '月份 (1-12，可選)')
     .option('-f, --format <format>', '輸出格式 (simple | json | table)', 'simple')
     .action(async (year: string, month: string | undefined, options: { format: OutputFormat }) => {

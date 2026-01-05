@@ -86,6 +86,13 @@ export const SUPPORTED_YEAR_RANGE = {
 } as const;
 
 /**
+ * 取得年份參數說明文字
+ */
+export function getYearArgumentDescription(): string {
+  return `年份 (${SUPPORTED_YEAR_RANGE.start}-${SUPPORTED_YEAR_RANGE.end})`;
+}
+
+/**
  * 假日類型常數
  */
 export const HOLIDAY_TYPES = {

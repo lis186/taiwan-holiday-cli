@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Table from 'cli-table3';
 import { getHolidayService } from '../services/holiday-service.js';
 import type { WorkdaysStats } from '../types/holiday.js';
+import { getYearArgumentDescription } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
 
 /**
@@ -54,7 +55,7 @@ export function formatWorkdaysResult(
 export function createWorkdaysCommand(): Command {
   const cmd = new Command('workdays')
     .description('計算指定月份的工作天數')
-    .argument('<year>', '年份 (2017-2026)')
+    .argument('<year>', getYearArgumentDescription())
     .argument('<month>', '月份 (1-12)')
     .option('-f, --format <format>', '輸出格式 (simple | json | table)', 'simple')
     .action(async (year: string, month: string, options: { format: OutputFormat }) => {

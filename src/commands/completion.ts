@@ -1,4 +1,16 @@
 import { Command } from 'commander';
+import { SUPPORTED_YEAR_RANGE } from '../types/holiday.js';
+
+/**
+ * 產生支援年份的字串列表
+ */
+function getYearsString(): string {
+  const years: string[] = [];
+  for (let year = SUPPORTED_YEAR_RANGE.start; year <= SUPPORTED_YEAR_RANGE.end; year++) {
+    years.push(year.toString());
+  }
+  return years.join(' ');
+}
 
 const COMMANDS = [
   'check',
@@ -41,7 +53,7 @@ _holiday_completions() {
       return 0
       ;;
     stats|list|workdays)
-      local years="2017 2018 2019 2020 2021 2022 2023 2024 2025 2026"
+      local years="${getYearsString()}"
       COMPREPLY=( $(compgen -W "\${years}" -- "\${cur}") )
       return 0
       ;;
@@ -114,7 +126,7 @@ _holiday() {
     args)
       case "\$words[1]" in
         stats|list|workdays)
-          _values 'year' 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026
+          _values 'year' ${getYearsString()}
           ;;
         cache)
           _values 'action' 'status' 'clear'
@@ -178,7 +190,7 @@ export function generateFishCompletion(): string {
     'complete -c holiday -n "__fish_seen_subcommand_from completion" -a "bash zsh fish"',
     '',
     '# Year completions for stats, list, workdays',
-    'complete -c holiday -n "__fish_seen_subcommand_from stats list workdays" -a "2017 2018 2019 2020 2021 2022 2023 2024 2025 2026"',
+    `complete -c holiday -n "__fish_seen_subcommand_from stats list workdays" -a "${getYearsString()}"`,
   ];
 
   return lines.join('\n');
