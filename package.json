@@ -53,6 +53,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/user/taiwan-holiday-cli.git"
-  }
+    "url": "git+https://github.com/lis186/taiwan-holiday-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lis186/taiwan-holiday-cli/issues"
+  },
+  "homepage": "https://github.com/lis186/taiwan-holiday-cli#readme"
 }
