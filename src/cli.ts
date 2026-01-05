@@ -14,16 +14,17 @@ import { createCacheCommand } from './commands/cache.js';
 import { createConfigCommand } from './commands/config.js';
 import { createHealthCommand } from './commands/health.js';
 import { createCompletionCommand } from './commands/completion.js';
-import { getHolidayService } from './services/holiday-service.js';
+import { CLI_VERSION, KNOWN_COMMANDS } from './lib/constants.js';
 import { AppError, getExitCode, formatErrorMessage } from './lib/errors.js';
 import { output } from './lib/output.js';
+import { getHolidayService } from './services/holiday-service.js';
 
 const program = new Command();
 
 program
   .name('holiday')
   .description('台灣國定假日查詢 CLI 工具')
-  .version('1.0.0')
+  .version(CLI_VERSION)
   .option('--no-cache', '強制從 API 重新獲取，不使用快取');
 
 // Handle --no-cache global option
@@ -64,10 +65,9 @@ function preprocessArgv(): string[] {
     const firstArg = args[0];
     // Skip if starts with - (option), is a known command, or looks like a version
     if (!firstArg.startsWith('-') && !firstArg.startsWith('v')) {
-      const knownCommands = ['check', 'today', 'range', 'stats', 'list', 'years', 'next', 'month', 'workdays', 'between', 'cache', 'config', 'health', 'completion', 'help'];
       // Check if it looks like a date (contains digits and possibly separators)
       const looksLikeDate = /^\d|^today|^tomorrow|^yesterday|^next/.test(firstArg.toLowerCase());
-      if (!knownCommands.includes(firstArg) && looksLikeDate) {
+      if (!KNOWN_COMMANDS.includes(firstArg as (typeof KNOWN_COMMANDS)[number]) && looksLikeDate) {
         // Insert 'check' command
         argv.splice(2, 0, 'check');
       }

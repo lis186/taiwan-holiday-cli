@@ -1,4 +1,5 @@
 import type { CacheItem } from '../types/holiday.js';
+import { CACHE_TTL_MS, CACHE_KEY_YEAR_PATTERN } from './constants.js';
 
 /**
  * 快取選項
@@ -31,7 +32,7 @@ export class Cache {
   private readonly useCacheOnError: boolean;
 
   constructor(options: CacheOptions = {}) {
-    this.ttl = options.ttl ?? 60 * 60 * 1000; // 1 hour default
+    this.ttl = options.ttl ?? CACHE_TTL_MS;
     this.useCacheOnError = options.useCacheOnError ?? false;
   }
 
@@ -108,7 +109,7 @@ export class Cache {
         itemCount++;
 
         // Extract year from key like "holidays_2025"
-        const match = key.match(/holidays_(\d{4})/);
+        const match = key.match(CACHE_KEY_YEAR_PATTERN);
         if (match) {
           cachedYears.push(parseInt(match[1], 10));
         }

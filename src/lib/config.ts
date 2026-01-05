@@ -1,15 +1,17 @@
 import Conf from 'conf';
-import type { OutputFormat } from '../commands/check.js';
+import {
+  PROJECT_NAME,
+  OUTPUT_FORMATS,
+  CONFIG_KEYS,
+  DEFAULT_OUTPUT_FORMAT,
+  type OutputFormat,
+  type ConfigKey,
+} from './constants.js';
 import { ConfigError } from './errors.js';
 
 export interface ConfigStore {
   format: OutputFormat;
 }
-
-const VALID_KEYS = ['format'] as const;
-type ValidKey = (typeof VALID_KEYS)[number];
-
-const VALID_FORMATS: OutputFormat[] = ['simple', 'json', 'table'];
 
 export interface ConfigService {
   list: () => Record<string, string>;
@@ -22,16 +24,16 @@ let configService: ConfigService | null = null;
 
 export function createConfigService(): ConfigService {
   const conf = new Conf<ConfigStore>({
-    projectName: 'taiwan-holiday-cli',
+    projectName: PROJECT_NAME,
     defaults: {
-      format: 'simple',
+      format: DEFAULT_OUTPUT_FORMAT,
     },
   });
 
   return {
     list: () => {
       const result: Record<string, string> = {};
-      for (const key of VALID_KEYS) {
+      for (const key of CONFIG_KEYS) {
         const value = conf.get(key);
         if (value !== undefined) {
           result[key] = String(value);
@@ -41,27 +43,27 @@ export function createConfigService(): ConfigService {
     },
 
     get: (key: string) => {
-      if (!VALID_KEYS.includes(key as ValidKey)) {
+      if (!CONFIG_KEYS.includes(key as ConfigKey)) {
         return undefined;
       }
-      const value = conf.get(key as ValidKey);
+      const value = conf.get(key as ConfigKey);
       return value !== undefined ? String(value) : undefined;
     },
 
     set: (key: string, value: string) => {
-      if (!VALID_KEYS.includes(key as ValidKey)) {
+      if (!CONFIG_KEYS.includes(key as ConfigKey)) {
         throw new ConfigError(`無效的設定項目: ${key}`);
       }
 
-      if (key === 'format' && !VALID_FORMATS.includes(value as OutputFormat)) {
-        throw new ConfigError(`無效的格式: ${value}，可用格式: ${VALID_FORMATS.join(', ')}`);
+      if (key === 'format' && !OUTPUT_FORMATS.includes(value as OutputFormat)) {
+        throw new ConfigError(`無效的格式: ${value}，可用格式: ${OUTPUT_FORMATS.join(', ')}`);
       }
 
-      conf.set(key as ValidKey, value as OutputFormat);
+      conf.set(key as ConfigKey, value as OutputFormat);
     },
 
     getDefaultFormat: () => {
-      return conf.get('format') || 'simple';
+      return conf.get('format') || DEFAULT_OUTPUT_FORMAT;
     },
   };
 }
@@ -73,6 +75,6 @@ export function getConfigService(): ConfigService {
   return configService;
 }
 
-export function isValidConfigKey(key: string): key is ValidKey {
-  return VALID_KEYS.includes(key as ValidKey);
+export function isValidConfigKey(key: string): key is ConfigKey {
+  return CONFIG_KEYS.includes(key as ConfigKey);
 }

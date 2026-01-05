@@ -1,10 +1,12 @@
 import { Command } from 'commander';
 import Table from 'cli-table3';
+import { type OutputFormat } from '../lib/constants.js';
 import { getHolidayService } from '../services/holiday-service.js';
 import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
 
-export type OutputFormat = 'simple' | 'json' | 'table';
+// Re-export for backward compatibility
+export type { OutputFormat } from '../lib/constants.js';
 
 /**
  * 格式化 check 命令結果

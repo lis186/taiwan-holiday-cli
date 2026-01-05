@@ -1,5 +1,11 @@
 import { ofetch } from 'ofetch';
 import { Cache } from '../lib/cache.js';
+import {
+  API_BASE_URL,
+  API_TIMEOUT_MS,
+  API_HEALTH_CHECK_TIMEOUT_MS,
+  CACHE_TTL_MS,
+} from '../lib/constants.js';
 import { getCurrentYear } from '../lib/date-parser.js';
 import { DataError, ValidationError } from '../lib/errors.js';
 import type { Holiday } from '../types/holiday.js';
@@ -16,13 +22,13 @@ export const RepositoryError = DataError;
  * 負責資料獲取與快取管理
  */
 export class HolidayRepository {
-  private readonly baseUrl = 'https://cdn.jsdelivr.net/gh/ruyut/TaiwanCalendar/data';
+  private readonly baseUrl = API_BASE_URL;
   private readonly cache: Cache;
-  private readonly timeout = 10000;
+  private readonly timeout = API_TIMEOUT_MS;
   private bypassCache = false;
 
   constructor() {
-    this.cache = new Cache({ ttl: 60 * 60 * 1000, useCacheOnError: true });
+    this.cache = new Cache({ ttl: CACHE_TTL_MS, useCacheOnError: true });
   }
 
   /**
@@ -110,7 +116,7 @@ export class HolidayRepository {
     try {
       const year = getCurrentYear();
       const url = `${this.baseUrl}/${year}.json`;
-      await ofetch(url, { timeout: 5000 });
+      await ofetch(url, { timeout: API_HEALTH_CHECK_TIMEOUT_MS });
       const latency = Date.now() - start;
       return { reachable: true, latency };
     } catch (error) {

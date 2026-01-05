@@ -870,7 +870,7 @@ bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/holiday
 |------|------|--------|------|-------------|
 | 類型強化 | 減少 `any` 使用，加強類型定義 | 🔴 緊急 | ✅ 完成 | 啟用 `strict: true`，消滅所有 `any` |
 | 錯誤處理 | 建立統一錯誤處理機制 | 🔴 緊急 | ✅ 完成 | 建立自定義錯誤類別，統一退出碼 |
-| 常數集中 | 將散落的配置集中到 `src/lib/constants.ts` | 🟡 重要 | ⏳ 待處理 | 消除魔術字串和魔術數字 |
+| 常數集中 | 將散落的配置集中到 `src/lib/constants.ts` | 🟡 重要 | ✅ 完成 | 消除魔術字串和魔術數字 |
 
 ##### P3 錯誤處理實作結果 (2026-01-05)
 
@@ -890,6 +890,30 @@ bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/holiday
 **退出碼:**
 - 0: SUCCESS, 1: GENERAL, 2: VALIDATION
 - 3: NETWORK, 4: DATA, 5: CONFIG
+
+##### P3 常數集中實作結果 (2026-01-05)
+
+| 指標 | 值 |
+|------|-----|
+| 新增模組 | `src/lib/constants.ts` |
+| 集中常數 | 15 個 |
+| 更新模組 | 5 個 |
+| 測試數量 | 314 passing |
+| 覆蓋率 | 95.38% |
+
+**集中的常數類別:**
+- **API 常數**: `API_BASE_URL`, `API_TIMEOUT_MS`, `API_HEALTH_CHECK_TIMEOUT_MS`
+- **快取常數**: `CACHE_TTL_MS`, `CACHE_KEY_PREFIX`, `CACHE_KEY_YEAR_PATTERN`
+- **設定常數**: `PROJECT_NAME`, `CLI_VERSION`, `OUTPUT_FORMATS`, `CONFIG_KEYS`, `DEFAULT_OUTPUT_FORMAT`
+- **CLI 常數**: `KNOWN_COMMANDS`
+- **日期常數**: `MONTH_RANGE`
+
+**更新模組:**
+- `holiday-repository.ts` → 使用 API 常數
+- `cache.ts` → 使用快取常數
+- `config.ts` → 使用設定常數
+- `cli.ts` → 使用 CLI 版本與命令常數
+- `check.ts` → 從 constants.ts 匯出 OutputFormat
 
 | 項目 | 建議 | 緊急度 | 狀態 | Gemini 建議 |
 |------|------|--------|------|-------------|
