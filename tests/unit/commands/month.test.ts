@@ -15,9 +15,9 @@ vi.mock('../../../src/services/holiday-service.js', () => ({
 
 describe('month command', () => {
   const mockHolidays: Holiday[] = [
-    { date: '20251004', week: '六', isHoliday: true, description: '' },
-    { date: '20251005', week: '日', isHoliday: true, description: '' },
-    { date: '20251010', week: '五', isHoliday: true, description: '國慶日' },
+    { date: '20261004', week: '日', isHoliday: true, description: '' },
+    { date: '20261005', week: '一', isHoliday: true, description: '' },
+    { date: '20261010', week: '六', isHoliday: true, description: '國慶日' },
   ];
 
   beforeEach(() => {
@@ -27,33 +27,33 @@ describe('month command', () => {
 
   describe('formatMonthResult', () => {
     it('should format month holidays in simple format', () => {
-      const result = formatMonthResult(mockHolidays, 2025, 10, 'simple');
-      expect(result).toContain('2025年10月');
+      const result = formatMonthResult(mockHolidays, 2026, 10, 'simple');
+      expect(result).toContain('2026年10月');
       expect(result).toContain('國慶日');
     });
 
     it('should format as JSON', () => {
-      const result = formatMonthResult(mockHolidays, 2025, 10, 'json');
+      const result = formatMonthResult(mockHolidays, 2026, 10, 'json');
       const parsed = JSON.parse(result);
-      expect(parsed.year).toBe(2025);
+      expect(parsed.year).toBe(2026);
       expect(parsed.month).toBe(10);
       expect(parsed.holidays).toHaveLength(3);
     });
 
     it('should format as table', () => {
-      const result = formatMonthResult(mockHolidays, 2025, 10, 'table');
-      expect(result).toContain('2025年10月');
+      const result = formatMonthResult(mockHolidays, 2026, 10, 'table');
+      expect(result).toContain('2026年10月');
       expect(result).toContain('日期');
       expect(result).toContain('星期');
     });
 
     it('should handle empty holidays in simple format', () => {
-      const result = formatMonthResult([], 2025, 10, 'simple');
+      const result = formatMonthResult([], 2026, 10, 'simple');
       expect(result).toContain('無假期');
     });
 
     it('should handle empty holidays in table format', () => {
-      const result = formatMonthResult([], 2025, 10, 'table');
+      const result = formatMonthResult([], 2026, 10, 'table');
       expect(result).toContain('無假期');
     });
   });
@@ -76,7 +76,7 @@ describe('month command', () => {
       mockHolidayService.getHolidaysInRange.mockResolvedValue(mockHolidays);
 
       const cmd = createMonthCommand();
-      await cmd.parseAsync(['node', 'test', '2025', '10']);
+      await cmd.parseAsync(['node', 'test', '2026', '10']);
 
       expect(mockHolidayService.getHolidaysInRange).toHaveBeenCalled();
       expect(mockConsoleLog).toHaveBeenCalled();

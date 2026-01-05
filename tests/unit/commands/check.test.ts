@@ -17,15 +17,15 @@ describe('check command', () => {
 
   describe('formatCheckResult', () => {
     const holidayData: Holiday = {
-      date: '20251010',
-      week: '五',
+      date: '20261010',
+      week: '六',
       isHoliday: true,
       description: '國慶日',
     };
 
     const workdayData: Holiday = {
-      date: '20251008',
-      week: '三',
+      date: '20261008',
+      week: '四',
       isHoliday: false,
       description: '',
     };
@@ -33,23 +33,23 @@ describe('check command', () => {
     describe('simple format', () => {
       it('should format holiday in simple format', () => {
         const result = formatCheckResult(holidayData, 'simple');
-        expect(result).toContain('2025-10-10');
-        expect(result).toContain('五');
+        expect(result).toContain('2026-10-10');
+        expect(result).toContain('六');
         expect(result).toContain('假期');
         expect(result).toContain('國慶日');
       });
 
       it('should format workday in simple format', () => {
         const result = formatCheckResult(workdayData, 'simple');
-        expect(result).toContain('2025-10-08');
-        expect(result).toContain('三');
+        expect(result).toContain('2026-10-08');
+        expect(result).toContain('四');
         expect(result).toContain('不是假期');
         expect(result).toContain('工作日');
       });
 
       it('should format null result (date not in data)', () => {
-        const result = formatCheckResult(null, 'simple', '2025-06-15');
-        expect(result).toContain('2025-06-15');
+        const result = formatCheckResult(null, 'simple', '2026-06-15');
+        expect(result).toContain('2026-06-15');
         expect(result).toContain('查無資料');
       });
     });
@@ -59,9 +59,9 @@ describe('check command', () => {
         const result = formatCheckResult(holidayData, 'json');
         const parsed = JSON.parse(result);
         expect(parsed).toEqual({
-          date: '2025-10-10',
-          normalizedDate: '20251010',
-          week: '五',
+          date: '2026-10-10',
+          normalizedDate: '20261010',
+          week: '六',
           isHoliday: true,
           description: '國慶日',
         });
@@ -71,19 +71,19 @@ describe('check command', () => {
         const result = formatCheckResult(workdayData, 'json');
         const parsed = JSON.parse(result);
         expect(parsed).toEqual({
-          date: '2025-10-08',
-          normalizedDate: '20251008',
-          week: '三',
+          date: '2026-10-08',
+          normalizedDate: '20261008',
+          week: '四',
           isHoliday: false,
           description: '',
         });
       });
 
       it('should format null result as JSON', () => {
-        const result = formatCheckResult(null, 'json', '2025-06-15');
+        const result = formatCheckResult(null, 'json', '2026-06-15');
         const parsed = JSON.parse(result);
         expect(parsed).toEqual({
-          date: '2025-06-15',
+          date: '2026-06-15',
           normalizedDate: null,
           week: null,
           isHoliday: null,
@@ -100,16 +100,16 @@ describe('check command', () => {
         expect(result).toContain('星期');
         expect(result).toContain('是否假期');
         expect(result).toContain('說明');
-        expect(result).toContain('2025-10-10');
-        expect(result).toContain('五');
+        expect(result).toContain('2026-10-10');
+        expect(result).toContain('六');
         expect(result).toContain('✓');
         expect(result).toContain('國慶日');
       });
 
       it('should format workday as table', () => {
         const result = formatCheckResult(workdayData, 'table');
-        expect(result).toContain('2025-10-08');
-        expect(result).toContain('三');
+        expect(result).toContain('2026-10-08');
+        expect(result).toContain('四');
         // Should not have checkmark for non-holiday
         expect(result).not.toContain('✓');
       });

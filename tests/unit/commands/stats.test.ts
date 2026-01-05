@@ -15,7 +15,7 @@ vi.mock('../../../src/services/holiday-service.js', () => ({
 
 describe('stats command', () => {
   const mockStats: HolidayStats = {
-    year: 2025,
+    year: 2026,
     month: undefined,
     totalHolidays: 115,
     nationalHolidays: 10,
@@ -31,7 +31,7 @@ describe('stats command', () => {
   };
 
   const mockMonthStats: HolidayStats = {
-    year: 2025,
+    year: 2026,
     month: 10,
     totalHolidays: 12,
     nationalHolidays: 2,
@@ -53,14 +53,14 @@ describe('stats command', () => {
     describe('simple format', () => {
       it('should format year stats in simple format', () => {
         const result = formatStatsResult(mockStats, 'simple');
-        expect(result).toContain('2025');
+        expect(result).toContain('2026');
         expect(result).toContain('115');
         expect(result).toContain('假期');
       });
 
       it('should format month stats in simple format', () => {
         const result = formatStatsResult(mockMonthStats, 'simple');
-        expect(result).toContain('2025');
+        expect(result).toContain('2026');
         expect(result).toContain('10');
         expect(result).toContain('12');
       });
@@ -70,7 +70,7 @@ describe('stats command', () => {
       it('should format stats as JSON', () => {
         const result = formatStatsResult(mockStats, 'json');
         const parsed = JSON.parse(result);
-        expect(parsed.year).toBe(2025);
+        expect(parsed.year).toBe(2026);
         expect(parsed.totalHolidays).toBe(115);
         expect(parsed.nationalHolidays).toBe(10);
       });
@@ -116,9 +116,9 @@ describe('stats command', () => {
       mockHolidayService.getHolidayStats.mockResolvedValue(mockStats);
 
       const cmd = createStatsCommand();
-      await cmd.parseAsync(['node', 'test', '2025']);
+      await cmd.parseAsync(['node', 'test', '2026']);
 
-      expect(mockHolidayService.getHolidayStats).toHaveBeenCalledWith(2025, undefined);
+      expect(mockHolidayService.getHolidayStats).toHaveBeenCalledWith(2026, undefined);
       expect(mockConsoleLog).toHaveBeenCalled();
     });
 
@@ -126,9 +126,9 @@ describe('stats command', () => {
       mockHolidayService.getHolidayStats.mockResolvedValue(mockMonthStats);
 
       const cmd = createStatsCommand();
-      await cmd.parseAsync(['node', 'test', '2025', '10']);
+      await cmd.parseAsync(['node', 'test', '2026', '10']);
 
-      expect(mockHolidayService.getHolidayStats).toHaveBeenCalledWith(2025, 10);
+      expect(mockHolidayService.getHolidayStats).toHaveBeenCalledWith(2026, 10);
       expect(mockConsoleLog).toHaveBeenCalled();
     });
   });
@@ -143,7 +143,7 @@ describe('stats command', () => {
 
     it('should format month stats as table', () => {
       const result = formatStatsResult(mockMonthStats, 'table');
-      expect(result).toContain('2025年10月');
+      expect(result).toContain('2026年10月');
     });
   });
 });

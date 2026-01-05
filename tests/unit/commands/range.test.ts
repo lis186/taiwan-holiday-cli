@@ -15,13 +15,13 @@ vi.mock('../../../src/services/holiday-service.js', () => ({
 
 describe('range command', () => {
   const mockHolidays: Holiday[] = [
-    { date: '20251004', week: '六', isHoliday: true, description: '' },
-    { date: '20251005', week: '日', isHoliday: true, description: '' },
-    { date: '20251010', week: '五', isHoliday: true, description: '國慶日' },
+    { date: '20261004', week: '日', isHoliday: true, description: '' },
+    { date: '20261005', week: '一', isHoliday: true, description: '' },
+    { date: '20261010', week: '六', isHoliday: true, description: '國慶日' },
   ];
 
   const mockMakeupDays: Holiday[] = [
-    { date: '20250927', week: '六', isHoliday: false, description: '補行上班日' },
+    { date: '20260926', week: '六', isHoliday: false, description: '補行上班日' },
   ];
 
   beforeEach(() => {
@@ -33,9 +33,9 @@ describe('range command', () => {
     describe('simple format', () => {
       it('should format holidays in simple format', () => {
         const result = formatRangeResult(mockHolidays, [], 'simple');
-        expect(result).toContain('2025-10-04');
-        expect(result).toContain('2025-10-05');
-        expect(result).toContain('2025-10-10');
+        expect(result).toContain('2026-10-04');
+        expect(result).toContain('2026-10-05');
+        expect(result).toContain('2026-10-10');
         expect(result).toContain('國慶日');
         expect(result).toContain('3');
       });
@@ -43,7 +43,7 @@ describe('range command', () => {
       it('should include makeup days when provided', () => {
         const result = formatRangeResult(mockHolidays, mockMakeupDays, 'simple');
         expect(result).toContain('補班日');
-        expect(result).toContain('2025-09-27');
+        expect(result).toContain('2026-09-26');
       });
 
       it('should handle empty results', () => {
@@ -57,7 +57,7 @@ describe('range command', () => {
         const result = formatRangeResult(mockHolidays, [], 'json');
         const parsed = JSON.parse(result);
         expect(parsed.holidays).toHaveLength(3);
-        expect(parsed.holidays[0].date).toBe('2025-10-04');
+        expect(parsed.holidays[0].date).toBe('2026-10-04');
         expect(parsed.count).toBe(3);
       });
 
@@ -65,7 +65,7 @@ describe('range command', () => {
         const result = formatRangeResult(mockHolidays, mockMakeupDays, 'json');
         const parsed = JSON.parse(result);
         expect(parsed.makeupDays).toHaveLength(1);
-        expect(parsed.makeupDays[0].date).toBe('2025-09-27');
+        expect(parsed.makeupDays[0].date).toBe('2026-09-26');
       });
     });
 
@@ -75,8 +75,8 @@ describe('range command', () => {
         expect(result).toContain('日期');
         expect(result).toContain('星期');
         expect(result).toContain('說明');
-        expect(result).toContain('2025-10-04');
-        expect(result).toContain('六');
+        expect(result).toContain('2026-10-04');
+        expect(result).toContain('日');
       });
     });
   });
@@ -111,7 +111,7 @@ describe('range command', () => {
       mockHolidayService.getHolidaysInRange.mockResolvedValue(mockHolidays);
 
       const cmd = createRangeCommand();
-      await cmd.parseAsync(['node', 'test', '2025-10-01', '2025-10-31']);
+      await cmd.parseAsync(['node', 'test', '2026-10-01', '2026-10-31']);
 
       expect(mockHolidayService.getHolidaysInRange).toHaveBeenCalled();
       expect(mockHolidayService.getRelatedMakeupDays).not.toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe('range command', () => {
       mockHolidayService.getRelatedMakeupDays.mockResolvedValue(mockMakeupDays);
 
       const cmd = createRangeCommand();
-      await cmd.parseAsync(['node', 'test', '2025-10-01', '2025-10-31', '--include-workdays']);
+      await cmd.parseAsync(['node', 'test', '2026-10-01', '2026-10-31', '--include-workdays']);
 
       expect(mockHolidayService.getHolidaysInRange).toHaveBeenCalled();
       expect(mockHolidayService.getRelatedMakeupDays).toHaveBeenCalled();

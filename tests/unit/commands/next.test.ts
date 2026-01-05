@@ -15,8 +15,8 @@ vi.mock('../../../src/services/holiday-service.js', () => ({
 
 describe('next command', () => {
   const mockHolidays: Holiday[] = [
-    { date: '20250110', week: '五', isHoliday: true, description: '測試假期' },
-    { date: '20250115', week: '三', isHoliday: true, description: '另一個假期' },
+    { date: '20260110', week: '六', isHoliday: true, description: '測試假期' },
+    { date: '20260115', week: '四', isHoliday: true, description: '另一個假期' },
   ];
 
   beforeEach(() => {
@@ -26,14 +26,14 @@ describe('next command', () => {
 
   describe('findNextHoliday', () => {
     it('should find next holiday from a list', () => {
-      const today = '20250105';
+      const today = '20260105';
       const result = findNextHoliday(mockHolidays, today);
       expect(result).toBeDefined();
-      expect(result?.date).toBe('20250110');
+      expect(result?.date).toBe('20260110');
     });
 
     it('should return null if no future holiday', () => {
-      const today = '20250120';
+      const today = '20260120';
       const result = findNextHoliday(mockHolidays, today);
       expect(result).toBeNull();
     });
@@ -41,23 +41,23 @@ describe('next command', () => {
 
   describe('formatNextResult', () => {
     const holiday: Holiday = {
-      date: '20250110',
-      week: '五',
+      date: '20260110',
+      week: '六',
       isHoliday: true,
       description: '測試假期',
     };
 
     const holidayNoDesc: Holiday = {
-      date: '20250111',
-      week: '六',
+      date: '20260111',
+      week: '日',
       isHoliday: true,
       description: '',
     };
 
     it('should format next holiday in simple format', () => {
       const result = formatNextResult(holiday, 'simple');
-      expect(result).toContain('2025-01-10');
-      expect(result).toContain('五');
+      expect(result).toContain('2026-01-10');
+      expect(result).toContain('六');
       expect(result).toContain('測試假期');
     });
 
@@ -69,7 +69,7 @@ describe('next command', () => {
     it('should format as JSON', () => {
       const result = formatNextResult(holiday, 'json');
       const parsed = JSON.parse(result);
-      expect(parsed.date).toBe('2025-01-10');
+      expect(parsed.date).toBe('2026-01-10');
       expect(parsed.description).toBe('測試假期');
     });
 
@@ -116,24 +116,24 @@ describe('next command', () => {
 
   describe('findNextHoliday with skipWeekends', () => {
     const mixedHolidays: Holiday[] = [
-      { date: '20250111', week: '六', isHoliday: true, description: '' },  // weekend
-      { date: '20250112', week: '日', isHoliday: true, description: '' },  // weekend
-      { date: '20250128', week: '二', isHoliday: true, description: '春節' },  // special
+      { date: '20260111', week: '日', isHoliday: true, description: '' },  // weekend
+      { date: '20260117', week: '六', isHoliday: true, description: '' },  // weekend
+      { date: '20260217', week: '二', isHoliday: true, description: '春節' },  // special
     ];
 
     it('should skip weekends when option is true', () => {
-      const today = '20250105';
+      const today = '20260105';
       const result = findNextHoliday(mixedHolidays, today, true);
       expect(result).toBeDefined();
-      expect(result?.date).toBe('20250128');
+      expect(result?.date).toBe('20260217');
       expect(result?.description).toBe('春節');
     });
 
     it('should not skip weekends when option is false', () => {
-      const today = '20250105';
+      const today = '20260105';
       const result = findNextHoliday(mixedHolidays, today, false);
       expect(result).toBeDefined();
-      expect(result?.date).toBe('20250111');
+      expect(result?.date).toBe('20260111');
     });
   });
 });

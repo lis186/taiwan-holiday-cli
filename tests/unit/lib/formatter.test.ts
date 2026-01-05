@@ -8,9 +8,9 @@ import {
 describe('formatter', () => {
   describe('formatDateString', () => {
     it('should convert YYYYMMDD to YYYY-MM-DD', () => {
-      expect(formatDateString('20250101')).toBe('2025-01-01');
-      expect(formatDateString('20251010')).toBe('2025-10-10');
-      expect(formatDateString('20251231')).toBe('2025-12-31');
+      expect(formatDateString('20260101')).toBe('2026-01-01');
+      expect(formatDateString('20261010')).toBe('2026-10-10');
+      expect(formatDateString('20261231')).toBe('2026-12-31');
     });
 
     it('should handle edge cases', () => {
