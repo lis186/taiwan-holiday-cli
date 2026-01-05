@@ -1,15 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createHealthCommand, formatHealthResult } from '../../../src/commands/health.js';
+import { createConsoleLogSpy, createMockHolidayService } from '../../helpers/mocks.js';
 import type { HealthStatus } from '../../../src/commands/health.js';
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+// Mock console.log using helper
+const mockConsoleLog = createConsoleLogSpy();
 
-// Mock holiday service
-const mockHolidayService = {
-  getCacheStatus: vi.fn(),
-  checkApiHealth: vi.fn(),
-};
+// Mock holiday service using helper
+const mockHolidayService = createMockHolidayService();
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,

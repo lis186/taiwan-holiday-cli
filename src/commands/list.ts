@@ -1,15 +1,9 @@
 import { Command } from 'commander';
 import Table from 'cli-table3';
 import { getHolidayService } from '../services/holiday-service.js';
+import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
-
-/**
- * 格式化日期 YYYYMMDD -> YYYY-MM-DD
- */
-function formatDateString(date: string): string {
-  return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}`;
-}
 
 /**
  * 月份名稱

@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createCompletionCommand, generateBashCompletion, generateZshCompletion, generateFishCompletion } from '../../../src/commands/completion.js';
+import { createConsoleLogSpy } from '../../helpers/mocks.js';
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+// Mock console.log using helper
+const mockConsoleLog = createConsoleLogSpy();
 
 describe('completion command', () => {
   beforeEach(() => {

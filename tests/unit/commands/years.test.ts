@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createYearsCommand, formatYearsResult } from '../../../src/commands/years.js';
+import { createConsoleLogSpy, createMockHolidayService } from '../../helpers/mocks.js';
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+// Mock console.log using helper
+const mockConsoleLog = createConsoleLogSpy();
 
-// Mock holiday service
-const mockHolidayService = {
-  getSupportedYears: vi.fn().mockReturnValue([2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]),
-};
+// Mock holiday service using helper
+const mockHolidayService = createMockHolidayService();
+mockHolidayService.getSupportedYears.mockReturnValue([2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]);
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,

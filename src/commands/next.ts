@@ -1,15 +1,9 @@
 import { Command } from 'commander';
 import { getHolidayService } from '../services/holiday-service.js';
 import { parseDate, formatDate } from '../lib/date-parser.js';
+import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
-
-/**
- * 格式化日期 YYYYMMDD -> YYYY-MM-DD
- */
-function formatDateString(date: string): string {
-  return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}`;
-}
 
 /**
  * 判斷是否為一般週末（無特殊說明的週六日）

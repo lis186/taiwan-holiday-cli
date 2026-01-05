@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createCheckCommand, formatCheckResult } from '../../../src/commands/check.js';
+import { createMockHolidayService } from '../../helpers/mocks.js';
 import type { Holiday } from '../../../src/types/holiday.js';
 
-// Mock holiday service
-const mockHolidayService = {
-  checkHoliday: vi.fn(),
-};
+// Mock holiday service using helper
+const mockHolidayService = createMockHolidayService();
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,

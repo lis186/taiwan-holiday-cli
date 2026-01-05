@@ -16,6 +16,7 @@ import { createHealthCommand } from './commands/health.js';
 import { createCompletionCommand } from './commands/completion.js';
 import { HolidayServiceError, getHolidayService } from './services/holiday-service.js';
 import { DateParseError } from './lib/date-parser.js';
+import { output } from './lib/output.js';
 
 const program = new Command();
 
@@ -81,10 +82,10 @@ async function main() {
     await program.parseAsync(preprocessArgv());
   } catch (error) {
     if (error instanceof HolidayServiceError) {
-      console.error(`錯誤: ${error.message}`);
+      output.error(error.message);
       process.exit(1);
     } else if (error instanceof DateParseError) {
-      console.error(`日期格式錯誤: ${error.message}`);
+      output.errorRaw(`日期格式錯誤: ${error.message}`);
       process.exit(1);
     } else if (error instanceof Error) {
       // Commander.js exit override errors (help, version, etc.)
@@ -96,7 +97,7 @@ async function main() {
       if (error.message.includes('exitOverride')) {
         return;
       }
-      console.error(`錯誤: ${error.message}`);
+      output.error(error.message);
       process.exit(1);
     }
     throw error;

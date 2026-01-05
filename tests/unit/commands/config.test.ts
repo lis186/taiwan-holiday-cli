@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createConfigCommand, formatConfigList } from '../../../src/commands/config.js';
+import { createConsoleLogSpy } from '../../helpers/mocks.js';
 import type { OutputFormat } from '../../../src/commands/check.js';
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+// Mock console.log using helper
+const mockConsoleLog = createConsoleLogSpy();
 
 // Mock config store
 const mockStore = new Map<string, string>();

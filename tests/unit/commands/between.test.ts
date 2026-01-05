@@ -1,14 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createBetweenCommand, formatBetweenResult } from '../../../src/commands/between.js';
+import { createConsoleLogSpy, createMockHolidayService } from '../../helpers/mocks.js';
 import type { WorkdaysStats } from '../../../src/types/holiday.js';
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+// Mock console.log using helper
+const mockConsoleLog = createConsoleLogSpy();
 
-// Mock holiday service
-const mockHolidayService = {
-  getWorkdaysBetween: vi.fn(),
-};
+// Mock holiday service using helper
+const mockHolidayService = createMockHolidayService();
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,

@@ -1,14 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTodayCommand } from '../../../src/commands/today.js';
-import type { Holiday } from '../../../src/types/holiday.js';
+import { createConsoleLogSpy, createMockHolidayService, mockHolidayData } from '../../helpers/mocks.js';
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+// Mock console.log using helper
+const mockConsoleLog = createConsoleLogSpy();
 
-// Mock holiday service
-const mockHolidayService = {
-  checkHoliday: vi.fn(),
-};
+// Mock holiday service using helper
+const mockHolidayService = createMockHolidayService();
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,
@@ -38,16 +36,11 @@ describe('today command', () => {
     });
 
     it('should execute action and output result', async () => {
-      const mockHoliday: Holiday = {
-        date: '20250105',
-        week: '日',
-        isHoliday: true,
-        description: '',
-      };
+      // Use shared mock data
+      const mockHoliday = { ...mockHolidayData.weekend, date: '20250105', week: '日' };
       mockHolidayService.checkHoliday.mockResolvedValue(mockHoliday);
 
       const cmd = createTodayCommand();
-      // Parse without args, should use today
       await cmd.parseAsync(['node', 'test']);
 
       expect(mockHolidayService.checkHoliday).toHaveBeenCalledWith('today');
