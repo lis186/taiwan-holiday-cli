@@ -1,18 +1,15 @@
 import { ofetch } from 'ofetch';
 import { Cache } from '../lib/cache.js';
 import { getCurrentYear } from '../lib/date-parser.js';
+import { DataError, ValidationError } from '../lib/errors.js';
 import type { Holiday } from '../types/holiday.js';
 import { SUPPORTED_YEAR_RANGE } from '../types/holiday.js';
 
 /**
- * Repository 錯誤
+ * Repository 錯誤（向後相容別名）
+ * @deprecated 請使用 DataError
  */
-export class RepositoryError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'RepositoryError';
-  }
-}
+export const RepositoryError = DataError;
 
 /**
  * 假期資料儲存庫
@@ -52,10 +49,10 @@ export class HolidayRepository {
 
       return await this.cache.getOrFetch(cacheKey, () => this.fetchFromApi(year));
     } catch (error) {
-      if (error instanceof RepositoryError) {
+      if (error instanceof DataError) {
         throw error;
       }
-      throw new RepositoryError(
+      throw new DataError(
         `無法取得 ${year} 年假期資料: ${error instanceof Error ? error.message : String(error)}`
       );
     }
@@ -74,7 +71,7 @@ export class HolidayRepository {
    */
   private validateYear(year: number): void {
     if (year < SUPPORTED_YEAR_RANGE.start || year > SUPPORTED_YEAR_RANGE.end) {
-      throw new RepositoryError(
+      throw new ValidationError(
         `年份 ${year} 超出支援範圍 (${SUPPORTED_YEAR_RANGE.start}-${SUPPORTED_YEAR_RANGE.end})`
       );
     }

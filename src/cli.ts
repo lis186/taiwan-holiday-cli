@@ -14,8 +14,8 @@ import { createCacheCommand } from './commands/cache.js';
 import { createConfigCommand } from './commands/config.js';
 import { createHealthCommand } from './commands/health.js';
 import { createCompletionCommand } from './commands/completion.js';
-import { HolidayServiceError, getHolidayService } from './services/holiday-service.js';
-import { DateParseError } from './lib/date-parser.js';
+import { getHolidayService } from './services/holiday-service.js';
+import { AppError, getExitCode, formatErrorMessage } from './lib/errors.js';
 import { output } from './lib/output.js';
 
 const program = new Command();
@@ -81,14 +81,8 @@ async function main() {
   try {
     await program.parseAsync(preprocessArgv());
   } catch (error) {
-    if (error instanceof HolidayServiceError) {
-      output.error(error.message);
-      process.exit(1);
-    } else if (error instanceof DateParseError) {
-      output.errorRaw(`日期格式錯誤: ${error.message}`);
-      process.exit(1);
-    } else if (error instanceof Error) {
-      // Commander.js exit override errors (help, version, etc.)
+    // Commander.js exit override errors (help, version, etc.)
+    if (error instanceof Error) {
       const errorName = (error as { code?: string }).code;
       if (errorName === 'commander.helpDisplayed' || errorName === 'commander.version') {
         return;
@@ -97,9 +91,17 @@ async function main() {
       if (error.message.includes('exitOverride')) {
         return;
       }
-      output.error(error.message);
-      process.exit(1);
     }
+
+    // Handle application errors with unified error handling
+    if (error instanceof AppError) {
+      output.errorRaw(formatErrorMessage(error));
+      process.exit(getExitCode(error));
+    } else if (error instanceof Error) {
+      output.error(error.message);
+      process.exit(getExitCode(error));
+    }
+
     throw error;
   }
 }

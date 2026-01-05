@@ -1,5 +1,6 @@
 import Conf from 'conf';
 import type { OutputFormat } from '../commands/check.js';
+import { ConfigError } from './errors.js';
 
 export interface ConfigStore {
   format: OutputFormat;
@@ -49,11 +50,11 @@ export function createConfigService(): ConfigService {
 
     set: (key: string, value: string) => {
       if (!VALID_KEYS.includes(key as ValidKey)) {
-        throw new Error(`無效的設定項目: ${key}`);
+        throw new ConfigError(`無效的設定項目: ${key}`);
       }
 
       if (key === 'format' && !VALID_FORMATS.includes(value as OutputFormat)) {
-        throw new Error(`無效的格式: ${value}，可用格式: ${VALID_FORMATS.join(', ')}`);
+        throw new ConfigError(`無效的格式: ${value}，可用格式: ${VALID_FORMATS.join(', ')}`);
       }
 
       conf.set(key as ValidKey, value as OutputFormat);

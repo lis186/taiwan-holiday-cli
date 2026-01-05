@@ -1,14 +1,11 @@
 import { ParsedDate, SUPPORTED_YEAR_RANGE, WEEKDAY_NAMES } from '../types/holiday.js';
+import { DateValidationError } from './errors.js';
 
 /**
- * 日期解析錯誤
+ * 日期解析錯誤（向後相容別名）
+ * @deprecated 請使用 DateValidationError
  */
-export class DateParseError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'DateParseError';
-  }
-}
+export const DateParseError = DateValidationError;
 
 /**
  * 檢查是否為閏年
@@ -183,26 +180,26 @@ export function parseDate(dateStr: string): ParsedDate {
       month = parseInt(separatorMatch[2], 10);
       day = parseInt(separatorMatch[3], 10);
     } else {
-      throw new DateParseError(`無效的日期格式：${dateStr}，請使用 YYYY-MM-DD 或 YYYYMMDD`);
+      throw new DateValidationError(`無效的日期格式：${dateStr}，請使用 YYYY-MM-DD 或 YYYYMMDD`);
     }
   }
 
   // 驗證年份範圍
   if (year < SUPPORTED_YEAR_RANGE.start || year > SUPPORTED_YEAR_RANGE.end) {
-    throw new DateParseError(
+    throw new DateValidationError(
       `年份 ${year} 超出支援範圍 (${SUPPORTED_YEAR_RANGE.start}-${SUPPORTED_YEAR_RANGE.end})`
     );
   }
 
   // 驗證月份
   if (month < 1 || month > 12) {
-    throw new DateParseError(`無效的月份：${month}，月份必須在 1-12 之間`);
+    throw new DateValidationError(`無效的月份：${month}，月份必須在 1-12 之間`);
   }
 
   // 驗證日期
   const maxDay = getDaysInMonth(year, month);
   if (day < 1 || day > maxDay) {
-    throw new DateParseError(`無效的日期：${year}-${month}-${day}`);
+    throw new DateValidationError(`無效的日期：${year}-${month}-${day}`);
   }
 
   const normalized = `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;

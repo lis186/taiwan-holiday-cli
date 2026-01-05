@@ -1,17 +1,14 @@
 import { parseDate, getDaysInMonth, daysBetween, getYearsInRange } from '../lib/date-parser.js';
+import { ServiceError, ValidationError } from '../lib/errors.js';
 import { HolidayRepository, RepositoryError } from './holiday-repository.js';
 import type { Holiday, HolidayStats, WorkdaysStats } from '../types/holiday.js';
 import { SUPPORTED_YEAR_RANGE, HOLIDAY_TYPES } from '../types/holiday.js';
 
 /**
- * 假期服務錯誤
+ * 假期服務錯誤（向後相容別名）
+ * @deprecated 請使用 ServiceError
  */
-export class HolidayServiceError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'HolidayServiceError';
-  }
-}
+export const HolidayServiceError = ServiceError;
 
 /**
  * 範圍查詢選項
@@ -47,7 +44,7 @@ export class HolidayService {
       return await this.repository.getHolidaysForYear(year);
     } catch (error) {
       if (error instanceof RepositoryError) {
-        throw new HolidayServiceError(error.message);
+        throw new ServiceError(error.message);
       }
       throw error;
     }
@@ -79,7 +76,7 @@ export class HolidayService {
     const endNum = parseInt(end.normalized, 10);
 
     if (startNum > endNum) {
-      throw new HolidayServiceError(`開始日期 ${startDateStr} 不能晚於結束日期 ${endDateStr}`);
+      throw new ValidationError(`開始日期 ${startDateStr} 不能晚於結束日期 ${endDateStr}`);
     }
 
     const result: Holiday[] = [];
@@ -117,7 +114,7 @@ export class HolidayService {
   async getHolidayStats(year: number, month?: number): Promise<HolidayStats> {
     // 驗證月份
     if (month !== undefined && (month < 1 || month > 12)) {
-      throw new HolidayServiceError(`無效的月份: ${month}，月份必須在 1-12 之間`);
+      throw new ValidationError(`無效的月份: ${month}，月份必須在 1-12 之間`);
     }
 
     const holidays = await this.getHolidaysForYear(year);
@@ -177,7 +174,7 @@ export class HolidayService {
     const endNum = parseInt(end.normalized, 10);
 
     if (startNum > endNum) {
-      throw new HolidayServiceError(`開始日期 ${startDateStr} 不能晚於結束日期 ${endDateStr}`);
+      throw new ValidationError(`開始日期 ${startDateStr} 不能晚於結束日期 ${endDateStr}`);
     }
 
     // 計算總天數

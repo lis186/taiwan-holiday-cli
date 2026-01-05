@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { HolidayService, HolidayServiceError } from '../../src/services/holiday-service.js';
+import { ValidationError, ServiceError } from '../../src/lib/errors.js';
 import type { Holiday } from '../../src/types/holiday.js';
 
 // Mock ofetch
@@ -44,8 +45,8 @@ describe('HolidayService', () => {
     });
 
     it('should throw error for year out of range', async () => {
-      await expect(service.getHolidaysForYear(2030)).rejects.toThrow(HolidayServiceError);
-      await expect(service.getHolidaysForYear(2010)).rejects.toThrow(HolidayServiceError);
+      await expect(service.getHolidaysForYear(2030)).rejects.toThrow(ValidationError);
+      await expect(service.getHolidaysForYear(2010)).rejects.toThrow(ValidationError);
     });
 
     it('should use cache on second call', async () => {
@@ -115,7 +116,7 @@ describe('HolidayService', () => {
 
     it('should throw error if start date is after end date', async () => {
       await expect(service.getHolidaysInRange('2025-01-10', '2025-01-01')).rejects.toThrow(
-        HolidayServiceError
+        ValidationError
       );
     });
 
@@ -152,8 +153,8 @@ describe('HolidayService', () => {
     });
 
     it('should throw error for invalid month', async () => {
-      await expect(service.getHolidayStats(2025, 13)).rejects.toThrow(HolidayServiceError);
-      await expect(service.getHolidayStats(2025, 0)).rejects.toThrow(HolidayServiceError);
+      await expect(service.getHolidayStats(2025, 13)).rejects.toThrow(ValidationError);
+      await expect(service.getHolidayStats(2025, 0)).rejects.toThrow(ValidationError);
     });
   });
 
