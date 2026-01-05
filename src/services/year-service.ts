@@ -1,5 +1,6 @@
 import { ofetch } from 'ofetch';
 import { Cache } from '../lib/cache.js';
+import { getCurrentYear } from '../lib/date-parser.js';
 
 const YEARS_CACHE_KEY = 'available_years';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -90,7 +91,7 @@ export class YearService {
     if (years.length === 0) {
       return {
         start: DEFAULT_START_YEAR,
-        end: new Date().getFullYear(),
+        end: getCurrentYear(),
       };
     }
 
@@ -120,7 +121,7 @@ export class YearService {
    * 取得預設年份列表（當 API 和快取都不可用時）
    */
   private getDefaultYears(): number[] {
-    const currentYear = new Date().getFullYear();
+    const currentYear = getCurrentYear();
     const years: number[] = [];
     for (let year = DEFAULT_START_YEAR; year <= currentYear; year++) {
       years.push(year);

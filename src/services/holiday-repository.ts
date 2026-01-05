@@ -1,5 +1,6 @@
 import { ofetch } from 'ofetch';
 import { Cache } from '../lib/cache.js';
+import { getCurrentYear } from '../lib/date-parser.js';
 import type { Holiday } from '../types/holiday.js';
 import { SUPPORTED_YEAR_RANGE } from '../types/holiday.js';
 
@@ -110,7 +111,7 @@ export class HolidayRepository {
   async checkApiHealth(): Promise<{ reachable: boolean; latency?: number; error?: string }> {
     const start = Date.now();
     try {
-      const year = new Date().getFullYear();
+      const year = getCurrentYear();
       const url = `${this.baseUrl}/${year}.json`;
       await ofetch(url, { timeout: 5000 });
       const latency = Date.now() - start;

@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import Table from 'cli-table3';
 import { getHolidayService } from '../services/holiday-service.js';
 import { formatDateString } from '../lib/formatter.js';
+import { getDaysInMonth } from '../lib/date-parser.js';
 import type { Holiday } from '../types/holiday.js';
 import { getYearArgumentDescription } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
@@ -80,8 +81,8 @@ export function createMonthCommand(): Command {
 
       // Calculate date range for the month
       const startDate = `${year}-${month.padStart(2, '0')}-01`;
-      const daysInMonth = new Date(yearNum, monthNum, 0).getDate();
-      const endDate = `${year}-${month.padStart(2, '0')}-${daysInMonth.toString().padStart(2, '0')}`;
+      const daysInMonthCount = getDaysInMonth(yearNum, monthNum);
+      const endDate = `${year}-${month.padStart(2, '0')}-${daysInMonthCount.toString().padStart(2, '0')}`;
 
       const holidays = await service.getHolidaysInRange(startDate, endDate, { holidaysOnly: true });
       const output = formatMonthResult(holidays, yearNum, monthNum, options.format);

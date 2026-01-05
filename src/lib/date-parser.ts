@@ -20,12 +20,100 @@ function isLeapYear(year: number): boolean {
 /**
  * 取得指定月份的天數
  */
-function getDaysInMonth(year: number, month: number): number {
-  const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+export function getDaysInMonth(year: number, month: number): number {
+  const daysInMonthArray = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   if (month === 2 && isLeapYear(year)) {
     return 29;
   }
-  return daysInMonth[month - 1];
+  return daysInMonthArray[month - 1];
+}
+
+/**
+ * 取得目前日期
+ */
+export function getCurrentDate(): ParsedDate {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const normalized = `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
+  const iso = formatDate(year, month, day);
+  return { year, month, day, normalized, iso };
+}
+
+/**
+ * 取得目前年份
+ */
+export function getCurrentYear(): number {
+  return new Date().getFullYear();
+}
+
+/**
+ * 將 Date 物件轉換為 normalized 字串 (YYYYMMDD)
+ */
+export function dateToNormalized(date: Date): string {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
+}
+
+/**
+ * 日期加減天數
+ */
+export function addDays(date: ParsedDate, days: number): ParsedDate {
+  const d = new Date(date.year, date.month - 1, date.day);
+  d.setDate(d.getDate() + days);
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const normalized = `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
+  const iso = formatDate(year, month, day);
+  return { year, month, day, normalized, iso };
+}
+
+/**
+ * 日期加減月數
+ */
+export function addMonths(date: ParsedDate, months: number): ParsedDate {
+  const d = new Date(date.year, date.month - 1, date.day);
+  d.setMonth(d.getMonth() + months);
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const normalized = `${year}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
+  const iso = formatDate(year, month, day);
+  return { year, month, day, normalized, iso };
+}
+
+/**
+ * 將 ParsedDate 轉換為 JavaScript Date 物件
+ */
+export function parsedDateToDate(date: ParsedDate): Date {
+  return new Date(date.year, date.month - 1, date.day);
+}
+
+/**
+ * 計算兩個日期之間的天數（包含起始和結束日期）
+ */
+export function daysBetween(start: ParsedDate, end: ParsedDate): number {
+  const startDate = parsedDateToDate(start);
+  const endDate = parsedDateToDate(end);
+  return Math.floor((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+}
+
+/**
+ * 取得日期範圍內的所有年份（擴展搜尋範圍用）
+ */
+export function getYearsInRange(start: ParsedDate, end: ParsedDate, expandMonths = 0): number[] {
+  const searchStart = new Date(start.year, start.month - 1 - expandMonths, 1);
+  const searchEnd = new Date(end.year, end.month + expandMonths, 0);
+
+  const years = new Set<number>();
+  for (let d = new Date(searchStart); d <= searchEnd; d.setMonth(d.getMonth() + 1)) {
+    years.add(d.getFullYear());
+  }
+  return Array.from(years).sort((a, b) => a - b);
 }
 
 /**

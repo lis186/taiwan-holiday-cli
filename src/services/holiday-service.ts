@@ -1,4 +1,4 @@
-import { parseDate } from '../lib/date-parser.js';
+import { parseDate, getDaysInMonth, daysBetween, getYearsInRange } from '../lib/date-parser.js';
 import { HolidayRepository, RepositoryError } from './holiday-repository.js';
 import type { Holiday, HolidayStats, WorkdaysStats } from '../types/holiday.js';
 import { SUPPORTED_YEAR_RANGE, HOLIDAY_TYPES } from '../types/holiday.js';
@@ -140,7 +140,7 @@ export class HolidayService {
     const monthStr = month.toString().padStart(2, '0');
 
     // 該月份的所有日期
-    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysInMonthCount = getDaysInMonth(year, month);
 
     let holidayCount = 0;
     let makeupWorkdays = 0;
@@ -156,10 +156,10 @@ export class HolidayService {
       }
     }
 
-    const workdays = daysInMonth - holidayCount;
+    const workdays = daysInMonthCount - holidayCount;
 
     return {
-      totalDays: daysInMonth,
+      totalDays: daysInMonthCount,
       workdays,
       holidays: holidayCount,
       makeupWorkdays,
@@ -181,9 +181,7 @@ export class HolidayService {
     }
 
     // 計算總天數
-    const startDate = new Date(start.year, start.month - 1, start.day);
-    const endDate = new Date(end.year, end.month - 1, end.day);
-    const totalDays = Math.floor((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    const totalDays = daysBetween(start, end);
 
     // 取得範圍內的假期
     const holidaysInRange = await this.getHolidaysInRange(startDateStr, endDateStr);
@@ -218,13 +216,7 @@ export class HolidayService {
     const result: Holiday[] = [];
 
     // 擴展搜尋範圍（前後一個月）
-    const searchStart = new Date(start.year, start.month - 2, 1);
-    const searchEnd = new Date(end.year, end.month, 0);
-
-    const years = new Set<number>();
-    for (let d = new Date(searchStart); d <= searchEnd; d.setMonth(d.getMonth() + 1)) {
-      years.add(d.getFullYear());
-    }
+    const years = getYearsInRange(start, end, 1);
 
     for (const year of years) {
       if (year >= SUPPORTED_YEAR_RANGE.start && year <= SUPPORTED_YEAR_RANGE.end) {

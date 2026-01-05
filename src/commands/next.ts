@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { getHolidayService } from '../services/holiday-service.js';
-import { parseDate, formatDate } from '../lib/date-parser.js';
+import { parseDate, getCurrentDate, addDays } from '../lib/date-parser.js';
 import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
@@ -69,18 +69,12 @@ export function createNextCommand(): Command {
     .option('--skip-weekends', '跳過一般週末，只顯示特殊假日')
     .action(async (options: { format: OutputFormat; skipWeekends?: boolean }) => {
       const service = getHolidayService();
-      const today = parseDate('today');
+      const today = getCurrentDate();
 
       // Search within next 90 days
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + 90);
-      const endDateStr = formatDate(
-        endDate.getFullYear(),
-        endDate.getMonth() + 1,
-        endDate.getDate()
-      );
+      const endDate = addDays(today, 90);
 
-      const holidays = await service.getHolidaysInRange(today.iso, endDateStr, {
+      const holidays = await service.getHolidaysInRange(today.iso, endDate.iso, {
         holidaysOnly: true,
       });
       const nextHoliday = findNextHoliday(holidays, today.normalized, options.skipWeekends);
