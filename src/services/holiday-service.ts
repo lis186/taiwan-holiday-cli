@@ -1,6 +1,5 @@
-import { ofetch } from 'ofetch';
-import { Cache } from '../lib/cache.js';
 import { parseDate } from '../lib/date-parser.js';
+import { HolidayRepository, RepositoryError } from './holiday-repository.js';
 import type { Holiday, HolidayStats, WorkdaysStats } from '../types/holiday.js';
 import { SUPPORTED_YEAR_RANGE, HOLIDAY_TYPES } from '../types/holiday.js';
 
@@ -24,63 +23,33 @@ export interface RangeOptions {
 
 /**
  * 假期服務
+ * 提供假期查詢、統計等業務邏輯
  */
 export class HolidayService {
-  private readonly baseUrl = 'https://cdn.jsdelivr.net/gh/ruyut/TaiwanCalendar/data';
-  private readonly cache: Cache;
-  private readonly timeout = 10000; // 10 seconds
-  private bypassCache = false;
+  private readonly repository: HolidayRepository;
 
-  constructor() {
-    this.cache = new Cache({ ttl: 60 * 60 * 1000, useCacheOnError: true }); // 1 hour TTL
+  constructor(repository?: HolidayRepository) {
+    this.repository = repository ?? new HolidayRepository();
   }
 
   /**
    * 設定是否繞過快取
    */
   setBypassCache(bypass: boolean): void {
-    this.bypassCache = bypass;
+    this.repository.setBypassCache(bypass);
   }
 
   /**
    * 取得指定年份的假期資料
    */
   async getHolidaysForYear(year: number): Promise<Holiday[]> {
-    // 驗證年份
-    if (year < SUPPORTED_YEAR_RANGE.start || year > SUPPORTED_YEAR_RANGE.end) {
-      throw new HolidayServiceError(
-        `年份 ${year} 超出支援範圍 (${SUPPORTED_YEAR_RANGE.start}-${SUPPORTED_YEAR_RANGE.end})`
-      );
-    }
-
-    const cacheKey = `holidays_${year}`;
-
     try {
-      // 繞過快取直接取得資料
-      if (this.bypassCache) {
-        const url = `${this.baseUrl}/${year}.json`;
-        const data = await ofetch<Holiday[]>(url, {
-          timeout: this.timeout,
-        });
-        // 更新快取
-        this.cache.set(cacheKey, data);
-        return data;
-      }
-
-      return await this.cache.getOrFetch(cacheKey, async () => {
-        const url = `${this.baseUrl}/${year}.json`;
-        const data = await ofetch<Holiday[]>(url, {
-          timeout: this.timeout,
-        });
-        return data;
-      });
+      return await this.repository.getHolidaysForYear(year);
     } catch (error) {
-      if (error instanceof HolidayServiceError) {
-        throw error;
+      if (error instanceof RepositoryError) {
+        throw new HolidayServiceError(error.message);
       }
-      throw new HolidayServiceError(
-        `無法取得 ${year} 年假期資料: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw error;
     }
   }
 
@@ -286,34 +255,21 @@ export class HolidayService {
    * 清除快取
    */
   clearCache(): void {
-    this.cache.clear();
+    this.repository.clearCache();
   }
 
   /**
    * 取得快取狀態
    */
   getCacheStatus() {
-    return this.cache.getStatus();
+    return this.repository.getCacheStatus();
   }
 
   /**
    * 檢查 API 健康狀態
    */
   async checkApiHealth(): Promise<{ reachable: boolean; latency?: number; error?: string }> {
-    const start = Date.now();
-    try {
-      // 嘗試獲取當前年份的資料
-      const year = new Date().getFullYear();
-      const url = `${this.baseUrl}/${year}.json`;
-      await ofetch(url, { timeout: 5000 });
-      const latency = Date.now() - start;
-      return { reachable: true, latency };
-    } catch (error) {
-      return {
-        reachable: false,
-        error: error instanceof Error ? error.message : '無法連線',
-      };
-    }
+    return this.repository.checkApiHealth();
   }
 
   /**
