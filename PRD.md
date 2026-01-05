@@ -841,13 +841,28 @@ bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/holiday
 | 輸出服務 | 建立 `src/lib/output.ts` 封裝 console 輸出 | ✅ 完成 |
 | 測試工具 | 提取 mock 到 `tests/helpers/mocks.ts` | ✅ 完成 |
 
-#### 優先級 2：服務層重構（中風險、高效益）🔶 部分完成
+#### 優先級 2：服務層重構（中風險、高效益）✅ 已完成
 
 | 項目 | 建議 | 狀態 | 說明 |
 |------|------|------|------|
 | Repository 模式 | 建立 `HolidayRepository` | ✅ 完成 | 封裝快取與 API 邏輯 |
 | 拆分 HolidayService | 分離為 Calculator + Filter | ⏭️ 延後 | 當前架構已足夠，記為技術債 |
-| 統一日期處理 | 強化 `date-parser.ts` | ⚠️ 待處理 | **Gemini 建議：下一個最高優先級** |
+| 統一日期處理 | 強化 `date-parser.ts` | ✅ 完成 | 所有 `new Date()` 集中到 date-parser.ts |
+
+##### P2 統一日期處理實作結果 (2026-01-05)
+
+| 指標 | 值 |
+|------|-----|
+| 新增 helper functions | 9 個 |
+| 更新檔案 | 6 個 |
+| 測試數量 | 279 passing |
+| 覆蓋率 | 94.98% |
+| Commit | `5f97f07` |
+
+**新增 helpers:**
+- `getCurrentDate()`, `getCurrentYear()`, `getDaysInMonth()`
+- `addDays()`, `addMonths()`, `dateToNormalized()`
+- `parsedDateToDate()`, `daysBetween()`, `getYearsInRange()`
 
 #### 優先級 3：程式碼品質（低風險、中效益）🔶 部分完成
 
