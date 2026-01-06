@@ -70,7 +70,9 @@ holiday <date>              # 簡寫
 holiday today
 
 # 查詢接下來的假期
-holiday next [count]        # 預設顯示 5 個
+holiday next                # 顯示下一個假期
+holiday next 5              # 顯示接下來 5 個假期
+holiday next 5 --skip-weekends  # 跳過週末，只顯示特殊假日
 ```
 
 ### 範圍查詢
