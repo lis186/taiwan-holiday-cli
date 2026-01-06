@@ -1,9 +1,8 @@
 # taiwan-holiday-cli
 
 [![CI](https://github.com/lis186/taiwan-holiday-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/lis186/taiwan-holiday-cli/actions/workflows/ci.yml)
-[![npm version](https://badge.fury.io/js/taiwan-holiday-cli.svg)](https://www.npmjs.com/package/taiwan-holiday-cli)
-[![npm downloads](https://img.shields.io/npm/dm/taiwan-holiday-cli.svg)](https://www.npmjs.com/package/taiwan-holiday-cli)
-[![node](https://img.shields.io/node/v/taiwan-holiday-cli.svg)](https://www.npmjs.com/package/taiwan-holiday-cli)
+[![npm version](https://img.shields.io/npm/v/taiwan-holiday-cli)](https://www.npmjs.com/package/taiwan-holiday-cli)
+[![node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://www.npmjs.com/package/taiwan-holiday-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 台灣國定假日查詢 CLI 工具 - 快速查詢台灣假期、計算工作天數
