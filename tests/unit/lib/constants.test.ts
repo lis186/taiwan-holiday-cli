@@ -53,7 +53,7 @@ describe('constants', () => {
     });
 
     it('should have CLI version', () => {
-      expect(CLI_VERSION).toBe('1.0.0');
+      expect(CLI_VERSION).toBe('1.0.1');
       expect(CLI_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
     });
 

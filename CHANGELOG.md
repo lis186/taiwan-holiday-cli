@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-01-06
+
+### Fixed
+
+- `holiday next [count]` 現在正確支援 count 參數，可顯示多個假期
+- 搜尋範圍限制在支援的年份內 (2017-2026)
+
+### Added
+
+- `holiday next` 新增 `--skip-weekends` 選項，跳過一般週末只顯示特殊假日
+
 ## [1.0.0] - 2025-01-05
 
 ### Added

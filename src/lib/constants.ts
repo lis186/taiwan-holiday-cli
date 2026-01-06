@@ -48,7 +48,7 @@ export const PROJECT_NAME = 'taiwan-holiday-cli';
 /**
  * CLI 版本
  */
-export const CLI_VERSION = '1.0.0';
+export const CLI_VERSION = '1.0.1';
 
 /**
  * 輸出格式類型
