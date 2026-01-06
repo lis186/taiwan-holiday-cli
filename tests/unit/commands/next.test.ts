@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createNextCommand, formatNextResult, findNextHoliday } from '../../../src/commands/next.js';
+import {
+  createNextCommand,
+  formatNextResult,
+  formatNextResults,
+  findNextHoliday,
+  findNextHolidays,
+} from '../../../src/commands/next.js';
 import { createConsoleLogSpy, createMockHolidayService } from '../../helpers/mocks.js';
 import type { Holiday } from '../../../src/types/holiday.js';
 
@@ -134,6 +140,89 @@ describe('next command', () => {
       const result = findNextHoliday(mixedHolidays, today, false);
       expect(result).toBeDefined();
       expect(result?.date).toBe('20260111');
+    });
+  });
+
+  describe('findNextHolidays', () => {
+    const manyHolidays: Holiday[] = [
+      { date: '20260110', week: '六', isHoliday: true, description: '' },
+      { date: '20260111', week: '日', isHoliday: true, description: '' },
+      { date: '20260117', week: '六', isHoliday: true, description: '' },
+      { date: '20260118', week: '日', isHoliday: true, description: '' },
+      { date: '20260217', week: '二', isHoliday: true, description: '春節' },
+    ];
+
+    it('should find multiple holidays', () => {
+      const today = '20260105';
+      const result = findNextHolidays(manyHolidays, today, 3);
+      expect(result).toHaveLength(3);
+      expect(result[0].date).toBe('20260110');
+      expect(result[2].date).toBe('20260117');
+    });
+
+    it('should return fewer if not enough holidays', () => {
+      const today = '20260105';
+      const result = findNextHolidays(manyHolidays, today, 10);
+      expect(result).toHaveLength(5);
+    });
+
+    it('should skip weekends when option is true', () => {
+      const today = '20260105';
+      const result = findNextHolidays(manyHolidays, today, 2, true);
+      expect(result).toHaveLength(1);
+      expect(result[0].description).toBe('春節');
+    });
+  });
+
+  describe('formatNextResults', () => {
+    const holidays: Holiday[] = [
+      { date: '20260110', week: '六', isHoliday: true, description: '' },
+      { date: '20260217', week: '二', isHoliday: true, description: '春節' },
+    ];
+
+    it('should format multiple holidays in simple format', () => {
+      const result = formatNextResults(holidays, 'simple');
+      expect(result).toContain('接下來 2 個假期');
+      expect(result).toContain('2026-01-10');
+      expect(result).toContain('2026-02-17');
+      expect(result).toContain('春節');
+    });
+
+    it('should format as JSON with count', () => {
+      const result = formatNextResults(holidays, 'json');
+      const parsed = JSON.parse(result);
+      expect(parsed.found).toBe(true);
+      expect(parsed.count).toBe(2);
+      expect(parsed.holidays).toHaveLength(2);
+    });
+
+    it('should handle empty array in simple format', () => {
+      const result = formatNextResults([], 'simple');
+      expect(result).toContain('查無');
+    });
+
+    it('should handle empty array in json format', () => {
+      const result = formatNextResults([], 'json');
+      const parsed = JSON.parse(result);
+      expect(parsed.found).toBe(false);
+      expect(parsed.holidays).toHaveLength(0);
+    });
+  });
+
+  describe('createNextCommand with count argument', () => {
+    it('should accept count argument', async () => {
+      mockHolidayService.getHolidaysInRange.mockResolvedValue([
+        { date: '20260110', week: '六', isHoliday: true, description: '' },
+        { date: '20260111', week: '日', isHoliday: true, description: '' },
+        { date: '20260117', week: '六', isHoliday: true, description: '' },
+      ]);
+
+      const cmd = createNextCommand();
+      await cmd.parseAsync(['node', 'test', '3']);
+
+      expect(mockConsoleLog).toHaveBeenCalled();
+      const output = mockConsoleLog.mock.calls[0][0];
+      expect(output).toContain('接下來 3 個假期');
     });
   });
 });
