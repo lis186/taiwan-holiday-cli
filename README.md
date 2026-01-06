@@ -2,9 +2,13 @@
 
 [![CI](https://github.com/lis186/taiwan-holiday-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/lis186/taiwan-holiday-cli/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/taiwan-holiday-cli.svg)](https://www.npmjs.com/package/taiwan-holiday-cli)
+[![npm downloads](https://img.shields.io/npm/dm/taiwan-holiday-cli.svg)](https://www.npmjs.com/package/taiwan-holiday-cli)
+[![node](https://img.shields.io/node/v/taiwan-holiday-cli.svg)](https://www.npmjs.com/package/taiwan-holiday-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 台灣國定假日查詢 CLI 工具 - 快速查詢台灣假期、計算工作天數
+
+> 🎉 現已發佈於 [npm](https://www.npmjs.com/package/taiwan-holiday-cli)，可直接安裝使用！
 
 ## Features
 
@@ -16,14 +20,25 @@
 - 內建快取機制，離線可用
 - Shell 自動補全支援
 
+## Requirements
+
+- Node.js >= 20.0.0
+
 ## Installation
 
 ```bash
-# npm
+# 全域安裝
 npm install -g taiwan-holiday-cli
 
-# or run directly with npx
+# 或使用 npx 直接執行（無需安裝）
 npx taiwan-holiday-cli today
+```
+
+驗證安裝：
+
+```bash
+holiday --version
+# 1.0.0
 ```
 
 ## Quick Start
