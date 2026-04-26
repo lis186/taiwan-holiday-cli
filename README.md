@@ -218,6 +218,11 @@ source ~/.zshrc
 holiday completion fish > ~/.config/fish/completions/holiday.fish
 ```
 
+## 搭配 Claude / LLM 使用
+
+`-f json` 輸出格式穩定，可直接讓 Claude 透過 shell 呼叫。
+打包好的 Claude Skill：[`taiwan-holiday-skills`](https://github.com/lis186/taiwan-holiday-skills)。
+
 ## Data Source
 
 假期資料來自 [TaiwanCalendar](https://github.com/ruyut/TaiwanCalendar) 專案，感謝 [@ruyut](https://github.com/ruyut) 的維護。
