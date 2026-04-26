@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   createNextCommand,
   formatNextResult,
@@ -28,6 +28,15 @@ describe('next command', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockConsoleLog.mockClear();
+    // 凍結系統時間至 2026-01-01，確保 mock 假期（2026-01 範圍）都被視為未來，
+    // 避免 createNextCommand 走 getCurrentDate() 後，因實際執行日期已超過 mock
+    // 假期而回傳「查無假期」，造成時間敏感的 flaky failure。
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('findNextHoliday', () => {
