@@ -218,9 +218,47 @@ source ~/.zshrc
 holiday completion fish > ~/.config/fish/completions/holiday.fish
 ```
 
+## Use with Claude Code / LLM agents
+
+本 CLI 設計上對 LLM 友善：`-f json` 輸出穩定 schema、無需安裝、`npx` 即可呼叫，
+可直接讓 Claude 或其他 agent 透過 shell 工具查詢假期資料。
+
+直接呼叫：
+
+```bash
+npx --yes taiwan-holiday-cli today -f json
+npx --yes taiwan-holiday-cli workdays 2026 5 -f json
+npx --yes taiwan-holiday-cli next 5 --skip-weekends -f json
+```
+
+注意：在本 repo 根目錄執行 `npx` 會因為 npm 找不到本地 bin 而失敗，
+LLM 整合請從中性目錄呼叫，例如 `(cd /tmp && npx --yes taiwan-holiday-cli ...)`。
+
+要把這個 CLI 包成可重用的 Claude Agent Skill，請參考
+[`taiwan-holiday-skills`](https://github.com/lis186/taiwan-holiday-skills)。
+該 repo 提供現成的 SKILL.md（含觸發描述、JSON schema 提示、邊界規則），
+可透過 [OpenSkills](https://github.com/numman-ali/openskills) 一鍵部署：
+
+```bash
+npx openskills install lis186/taiwan-holiday-skills
+npx openskills sync
+```
+
 ## Data Source
 
-假期資料來自 [TaiwanCalendar](https://github.com/ruyut/TaiwanCalendar) 專案，感謝 [@ruyut](https://github.com/ruyut) 的維護。
+假期資料來自 [TaiwanCalendar](https://github.com/ruyut/TaiwanCalendar) 專案，
+感謝 [@ruyut](https://github.com/ruyut) 的維護。本 CLI 不做資料層的判斷，
+資料正確性由上游負責——若發現錯誤，請優先到 TaiwanCalendar 提 issue。
+
+CLI 採 npx 動態載入而非把資料內嵌，讓上游修正法規（例如 2025 年教師節恢復為全國放假）
+能自動透過 npm 更新生效，使用者端通常不需做事。
+
+## Limitations
+
+- 僅支援 2017–2026 年（用 `holiday years` 確認當前範圍）
+- 不處理農民曆、節氣、紫微等非官方行事曆
+- 不做日曆同步、提醒、請假規劃——本 CLI 只回答「某日期在中華民國政府行政機關辦公日曆表上是什麼狀態」
+- 補班日、補假等規則完全跟著資料源；CLI 本身不做法規推論
 
 ## Development
 
