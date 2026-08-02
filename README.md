@@ -181,11 +181,20 @@ holiday config set format json
 
 ## Supported Years
 
-目前支援 2017-2026 年的台灣假期資料。
+從 2017 年起（上游資料的起點）。**上限不寫死在套件裡** —— 可查的年份由上游
+[TaiwanCalendar](https://github.com/ruyut/TaiwanCalendar) 有沒有該年度資料決定，
+所以上游一發布新年度，不需要更新本套件就能查詢。
 
 ```bash
 holiday years
-# 支援的年份範圍：2017-2026 (共 10 年)
+# 支援的年份範圍：2017-2027 (共 11 年)   ← 執行時探測得到的結果
+```
+
+若查詢上游尚未發布的年度，會明確告知，而不是謊稱不支援：
+
+```bash
+holiday check 2028-01-01
+# 資料錯誤: 上游尚未發布 2028 年資料。中華民國政府行政機關辦公日曆表通常在前一年年中公布。
 ```
 
 ## Global Options
