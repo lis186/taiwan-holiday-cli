@@ -231,6 +231,7 @@ holiday completion fish > ~/.config/fish/completions/holiday.fish
 
 `-f json` 輸出格式穩定，可直接讓 Claude 透過 shell 呼叫。
 打包好的 Claude Skill：[`taiwan-holiday-skills`](https://github.com/lis186/taiwan-holiday-skills)。
+MCP server 版本（Claude Desktop / Cursor 等 MCP client 適用）：[`taiwan-holiday-mcp`](https://github.com/lis186/taiwan-holiday-mcp)。
 
 ## Data Source
 
