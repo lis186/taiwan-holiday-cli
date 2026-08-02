@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createHealthCommand, formatHealthResult } from '../../../src/commands/health.js';
 import { createConsoleLogSpy, createMockHolidayService } from '../../helpers/mocks.js';
+import { CLI_VERSION } from '../../../src/lib/constants.js';
 import type { HealthStatus } from '../../../src/commands/health.js';
 
 // Mock console.log using helper
@@ -24,7 +25,7 @@ describe('health command', () => {
       reachable: true,
       latency: 120,
     },
-    version: '1.0.0',
+    version: CLI_VERSION,
   };
 
   const mockUnhealthy: HealthStatus = {
@@ -37,7 +38,7 @@ describe('health command', () => {
       reachable: false,
       error: '無法連線',
     },
-    version: '1.0.0',
+    version: CLI_VERSION,
   };
 
   beforeEach(() => {

@@ -1,4 +1,9 @@
-import { ParsedDate, SUPPORTED_YEAR_RANGE, WEEKDAY_NAMES } from '../types/holiday.js';
+import {
+  ParsedDate,
+  MIN_SUPPORTED_YEAR,
+  getMaxQueryableYear,
+  WEEKDAY_NAMES,
+} from '../types/holiday.js';
 import { DateValidationError } from './errors.js';
 
 /**
@@ -118,7 +123,7 @@ export function getYearsInRange(start: ParsedDate, end: ParsedDate, expandMonths
  */
 export function isValidDate(year: number, month: number, day: number): boolean {
   // 檢查年份範圍
-  if (year < SUPPORTED_YEAR_RANGE.start || year > SUPPORTED_YEAR_RANGE.end) {
+  if (year < MIN_SUPPORTED_YEAR || year > getMaxQueryableYear()) {
     return false;
   }
 
@@ -185,9 +190,9 @@ export function parseDate(dateStr: string): ParsedDate {
   }
 
   // 驗證年份範圍
-  if (year < SUPPORTED_YEAR_RANGE.start || year > SUPPORTED_YEAR_RANGE.end) {
+  if (year < MIN_SUPPORTED_YEAR || year > getMaxQueryableYear()) {
     throw new DateValidationError(
-      `年份 ${year} 超出支援範圍 (${SUPPORTED_YEAR_RANGE.start}-${SUPPORTED_YEAR_RANGE.end})`
+      `年份 ${year} 超出可查詢範圍 (${MIN_SUPPORTED_YEAR}-${getMaxQueryableYear()})`
     );
   }
 

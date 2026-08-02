@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { HolidayService, HolidayServiceError } from '../../src/services/holiday-service.js';
-import { ValidationError, ServiceError } from '../../src/lib/errors.js';
+import { ValidationError } from '../../src/lib/errors.js';
 import type { Holiday } from '../../src/types/holiday.js';
+import { MIN_SUPPORTED_YEAR, getMaxQueryableYear, HOLIDAY_TYPES } from '../../src/types/holiday.js';
+import { getCurrentYear } from '../../src/lib/date-parser.js';
 
 // Mock ofetch
 vi.mock('ofetch', () => ({
@@ -23,6 +25,9 @@ describe('HolidayService', () => {
   let service: HolidayService;
 
   beforeEach(() => {
+    // clearAllMocks 只清呼叫紀錄，不清 mockResolvedValueOnce/mockRejectedValueOnce
+    // 的佇列 —— 未被消耗的 once 會洩漏到下一個測試，造成看不出原因的連鎖失敗。
+    vi.mocked(ofetch).mockReset();
     vi.clearAllMocks();
     service = new HolidayService();
   });
@@ -45,8 +50,12 @@ describe('HolidayService', () => {
     });
 
     it('should throw error for year out of range', async () => {
-      await expect(service.getHolidaysForYear(2030)).rejects.toThrow(ValidationError);
-      await expect(service.getHolidaysForYear(2010)).rejects.toThrow(ValidationError);
+      await expect(service.getHolidaysForYear(getMaxQueryableYear() + 1)).rejects.toThrow(
+        ValidationError
+      );
+      await expect(service.getHolidaysForYear(MIN_SUPPORTED_YEAR - 1)).rejects.toThrow(
+        ValidationError
+      );
     });
 
     it('should use cache on second call', async () => {
@@ -156,6 +165,86 @@ describe('HolidayService', () => {
       await expect(service.getHolidayStats(2025, 13)).rejects.toThrow(ValidationError);
       await expect(service.getHolidayStats(2025, 0)).rejects.toThrow(ValidationError);
     });
+
+    // holidayTypes 同時裝「分類桶」與「具體假日名」兩種語意。上游的 description
+    // 有時剛好等於分類桶名稱（補假、調整放假），曾經被兩邊各加一次而翻倍。
+    //
+    // 這份 fixture 刻意涵蓋三種情況：description 等於桶名、包含但不等於桶名、
+    // 以及空 description（週末）。
+    const collisionFixture: Holiday[] = [
+      { date: '20250127', week: '一', isHoliday: true, description: '補假' },
+      { date: '20250128', week: '二', isHoliday: true, description: '補假' },
+      { date: '20250203', week: '一', isHoliday: true, description: '調整放假' },
+      { date: '20250204', week: '二', isHoliday: true, description: '調整放假' },
+      { date: '20250205', week: '三', isHoliday: true, description: '調整放假' },
+      { date: '20250206', week: '四', isHoliday: true, description: '國定假日' },
+      { date: '20250207', week: '五', isHoliday: true, description: '春節調整放假' },
+      { date: '20250208', week: '六', isHoliday: true, description: '' },
+      { date: '20250215', week: '六', isHoliday: false, description: '補行上班' },
+    ];
+
+    it('should not double-count any description that collides with a category name', async () => {
+      vi.mocked(ofetch).mockResolvedValueOnce(collisionFixture);
+
+      const stats = await service.getHolidayStats(2025);
+
+      expect(stats.holidayTypes['補假']).toBe(2); // 舊碼: 4
+      expect(stats.holidayTypes['調整放假']).toBe(4); // 舊碼: 7
+      expect(stats.holidayTypes['國定假日']).toBe(1); // 舊碼: 3（含被誤算的週末）
+      expect(stats.holidayTypes['週末']).toBe(1); // 舊碼: 無此分類
+
+      // 包含但不等於桶名 → 仍應同時進兩個 key（證明沒有過度修正）
+      expect(stats.holidayTypes['春節調整放假']).toBe(1);
+      // 非假日分支本來就不加具體名稱，不受影響
+      expect(stats.holidayTypes['補行上班']).toBe(1);
+    });
+
+    // 週末的 description 是空字串，過去落入 else 分支被算成國定假日：
+    // 2026 年因此回報 114 個「國定假日」，實際具名的只有 16 個。
+    it('should not count plain weekends as named national holidays', async () => {
+      vi.mocked(ofetch).mockResolvedValueOnce(collisionFixture);
+
+      const stats = await service.getHolidayStats(2025);
+
+      expect(stats.nationalHolidays).toBe(1); // 舊碼: 2（週末被算進來）
+      expect(stats.weekends).toBe(1); // 舊碼: 無此欄位
+    });
+
+    // WEEKEND 桶名是本次新增的，若上游改用字面「週末」當 description，
+    // 它會成為新的碰撞候選 —— 既被算成國定假日、又汙染週末桶。
+    it('should treat a literal 週末 description as a weekend, not a national holiday', async () => {
+      vi.mocked(ofetch).mockResolvedValueOnce([
+        { date: '20250208', week: '六', isHoliday: true, description: '週末' },
+        { date: '20250209', week: '日', isHoliday: true, description: '' },
+      ] as Holiday[]);
+
+      const stats = await service.getHolidayStats(2025);
+
+      expect(stats.weekends).toBe(2);
+      expect(stats.nationalHolidays).toBe(0);
+      expect(stats.holidayTypes['週末']).toBe(2);
+      expect(stats.holidayTypes['國定假日']).toBeUndefined();
+    });
+
+    // 這條才是真正的護欄：不枚舉 key，而是斷言結構不變式。
+    // 先前只針對「補假」寫測試，於是漏掉了「調整放假」這個第二個碰撞
+    // （2019 年的補假筆數是 0，只錨定補假的測試在該年資料上舊碼也會通過）。
+    it('should keep every category bucket in sync with its top-level counter', async () => {
+      vi.mocked(ofetch).mockResolvedValueOnce(collisionFixture);
+
+      const stats = await service.getHolidayStats(2025);
+
+      expect(stats.holidayTypes[HOLIDAY_TYPES.COMPENSATORY] ?? 0).toBe(stats.compensatoryDays);
+      expect(stats.holidayTypes[HOLIDAY_TYPES.ADJUSTED] ?? 0).toBe(stats.adjustedHolidays);
+      expect(stats.holidayTypes[HOLIDAY_TYPES.NATIONAL] ?? 0).toBe(stats.nationalHolidays);
+      expect(stats.holidayTypes[HOLIDAY_TYPES.WEEKEND] ?? 0).toBe(stats.weekends);
+      expect(stats.holidayTypes[HOLIDAY_TYPES.WORKING] ?? 0).toBe(stats.workingDays);
+
+      // 四個放假分類必須剛好切分所有放假日，沒有重複也沒有遺漏
+      expect(
+        stats.compensatoryDays + stats.adjustedHolidays + stats.nationalHolidays + stats.weekends
+      ).toBe(stats.totalHolidays);
+    });
   });
 
   describe('getWorkdaysStats', () => {
@@ -195,13 +284,94 @@ describe('HolidayService', () => {
     });
   });
 
-  describe('getSupportedYears', () => {
-    it('should return array of supported years', () => {
-      const years = service.getSupportedYears();
+  describe('getRelatedMakeupDays 的錯誤分流', () => {
+    const notFound = (): Error =>
+      Object.assign(new Error('Not Found'), { response: { status: 404 } });
 
-      expect(years).toContain(2017);
-      expect(years).toContain(2026);
-      expect(years.length).toBe(10);
+    // 前後擴展一個月會跨進尚未發布的「未來」年份，那種情況應跳過。
+    // 用當前年份的 12 月，讓擴展落到今年+1（真正可能未發布的年度）。
+    it('should skip future years the upstream has not published', async () => {
+      const cy = getCurrentYear();
+      vi.mocked(ofetch)
+        .mockResolvedValueOnce(mockHolidays2025) // 今年
+        .mockRejectedValueOnce(notFound()); // 今年+1 尚未發布
+
+      await expect(
+        service.getRelatedMakeupDays(`${cy}-12-01`, `${cy}-12-31`)
+      ).resolves.toBeInstanceOf(Array);
+    });
+
+    // 「未來年度 404」= 尚未發布，可跳過。
+    // 「歷史／當年 404」= 上游把已發布的資料弄掉了，那是真的異常，
+    // 靜默跳過會讓使用者拿到不完整的補班日清單卻以為是完整的。
+    it('should not silently skip a past year whose data vanished upstream', async () => {
+      vi.mocked(ofetch)
+        .mockRejectedValueOnce(notFound()) // 2024（歷史年度）資料消失
+        .mockResolvedValueOnce(mockHolidays2025);
+
+      await expect(service.getRelatedMakeupDays('2025-01-01', '2025-01-31')).rejects.toThrow();
+    });
+
+    // 但網路故障不能被吞掉 —— 否則補班日靜默漏報，使用者拿到看似完整的答案
+    it('should propagate network failures instead of silently missing makeup days', async () => {
+      vi.mocked(ofetch)
+        .mockResolvedValueOnce(mockHolidays2025)
+        .mockRejectedValueOnce(new Error('ECONNRESET'));
+
+      await expect(service.getRelatedMakeupDays('2025-12-01', '2025-12-31')).rejects.toThrow();
+    });
+  });
+
+  describe('getAvailableYears', () => {
+    /** 上游沒有該年度時，ofetch 會拋出帶 response.status 的錯誤 */
+    const notFound = (): Error =>
+      Object.assign(new Error('Not Found'), { response: { status: 404 } });
+
+    it('should probe upstream for years beyond the current one', async () => {
+      // 今年+1 有資料、今年+2 是 404 → 探測應停在今年+1
+      vi.mocked(ofetch).mockResolvedValueOnce([]).mockRejectedValueOnce(notFound());
+
+      const years = await service.getAvailableYears();
+      const currentYear = getCurrentYear();
+
+      expect(years[0]).toBe(MIN_SUPPORTED_YEAR);
+      expect(years).toContain(currentYear);
+      expect(years[years.length - 1]).toBe(currentYear + 1);
+    });
+
+    // 只有 404 代表「上游沒有這一年」。網路故障若也被當成 404，
+    // 斷網時就會安靜地回報一個較短的範圍 —— 一個看起來完全正常的錯誤答案。
+    it('should throw on network failure instead of silently reporting a shorter range', async () => {
+      vi.mocked(ofetch).mockRejectedValueOnce(new Error('ECONNRESET'));
+
+      await expect(service.getAvailableYears()).rejects.toThrow();
+    });
+
+    // Cache 建構時帶 useCacheOnError: true，會在 fetcher 失敗時回傳「過期」的值。
+    // 對年份範圍而言那等於把網路故障偽裝成一個看似正常的舊答案 ——
+    // 正是本次要消滅的失效模式，所以這個 key 必須關掉該行為。
+    it('should throw on network failure even when a stale range is cached', async () => {
+      // 第一次成功 → 範圍進快取
+      vi.mocked(ofetch).mockResolvedValueOnce([]).mockRejectedValueOnce(notFound());
+      await service.getAvailableYears();
+
+      // 讓快取過期，然後在探測時遇到網路故障
+      vi.setSystemTime(new Date(Date.now() + 25 * 60 * 60 * 1000));
+      vi.mocked(ofetch).mockRejectedValueOnce(new Error('ECONNRESET'));
+
+      await expect(service.getAvailableYears()).rejects.toThrow();
+      vi.useRealTimers();
+    });
+
+    it('should not cache a range produced by a failed probe', async () => {
+      vi.mocked(ofetch).mockRejectedValueOnce(new Error('ECONNRESET'));
+      await expect(service.getAvailableYears()).rejects.toThrow();
+
+      // 網路恢復後應重新探測，而不是回傳上一次失敗留下的答案
+      vi.mocked(ofetch).mockResolvedValueOnce([]).mockRejectedValueOnce(notFound());
+
+      const years = await service.getAvailableYears();
+      expect(years[years.length - 1]).toBe(getCurrentYear() + 1);
     });
   });
 });

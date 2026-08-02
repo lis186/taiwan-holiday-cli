@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   createConsoleLogSpy,
   createConsoleErrorSpy,
@@ -38,7 +38,7 @@ describe('test helpers', () => {
       expect(mock.getWorkdaysStats).toBeDefined();
       expect(mock.getWorkdaysBetween).toBeDefined();
       expect(mock.getRelatedMakeupDays).toBeDefined();
-      expect(mock.getSupportedYears).toBeDefined();
+      expect(mock.getAvailableYears).toBeDefined();
       expect(mock.getCacheStatus).toBeDefined();
       expect(mock.clearCache).toBeDefined();
       expect(mock.checkApiHealth).toBeDefined();

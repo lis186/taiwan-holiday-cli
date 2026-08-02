@@ -20,8 +20,9 @@ export function formatStatsResult(stats: HolidayStats, format: OutputFormat): st
 
     const period = stats.month ? `${stats.year}年${stats.month}月` : `${stats.year}年`;
     table.push(['統計期間', period]);
-    table.push(['總假期天數', stats.totalHolidays.toString()]);
+    table.push(['總放假天數', stats.totalHolidays.toString()]);
     table.push(['國定假日', stats.nationalHolidays.toString()]);
+    table.push(['一般週末', stats.weekends.toString()]);
     table.push(['補假', stats.compensatoryDays.toString()]);
     table.push(['調整放假', stats.adjustedHolidays.toString()]);
     table.push(['補班日', stats.workingDays.toString()]);
@@ -32,8 +33,9 @@ export function formatStatsResult(stats: HolidayStats, format: OutputFormat): st
   // simple format
   const period = stats.month ? `${stats.year}年${stats.month}月` : `${stats.year}年`;
   let output = `${period}假期統計：`;
-  output += `\n- 總假期天數：${stats.totalHolidays} 天`;
+  output += `\n- 總放假天數：${stats.totalHolidays} 天`;
   output += `\n- 國定假日：${stats.nationalHolidays} 天`;
+  output += `\n- 一般週末：${stats.weekends} 天`;
   output += `\n- 補假：${stats.compensatoryDays} 天`;
   output += `\n- 調整放假：${stats.adjustedHolidays} 天`;
   output += `\n- 補班日：${stats.workingDays} 天`;

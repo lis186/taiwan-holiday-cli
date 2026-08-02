@@ -20,10 +20,12 @@ export interface HolidayStats {
   year: number;
   /** 月份（可選） */
   month?: number;
-  /** 總假日天數 */
+  /** 總放假天數（含週末） */
   totalHolidays: number;
-  /** 國定假日天數 */
+  /** 具名國定假日天數（不含週末） */
   nationalHolidays: number;
+  /** 一般週末天數（上游 description 為空的放假日） */
+  weekends: number;
   /** 補假天數 */
   compensatoryDays: number;
   /** 調整放假天數 */
@@ -78,18 +80,25 @@ export interface Config {
 }
 
 /**
- * 支援的年份範圍
+ * 上游資料最早提供的年份（ruyut/TaiwanCalendar 從 2017 開始）
  */
-export const SUPPORTED_YEAR_RANGE = {
-  start: 2017,
-  end: 2026,
-} as const;
+export const MIN_SUPPORTED_YEAR = 2017;
+
+/**
+ * 合理性上限：避免荒謬的年份輸入白跑一趟網路請求。
+ *
+ * 這不是能力上限 —— 某年份能不能查，取決於上游有沒有那筆資料，
+ * 由實際抓取的結果決定，不由本套件的版本決定。
+ */
+export function getMaxQueryableYear(): number {
+  return new Date().getFullYear() + 5;
+}
 
 /**
  * 取得年份參數說明文字
  */
 export function getYearArgumentDescription(): string {
-  return `年份 (${SUPPORTED_YEAR_RANGE.start}-${SUPPORTED_YEAR_RANGE.end})`;
+  return `年份 (${MIN_SUPPORTED_YEAR} 起，實際可查年份取決於上游資料)`;
 }
 
 /**
@@ -97,6 +106,7 @@ export function getYearArgumentDescription(): string {
  */
 export const HOLIDAY_TYPES = {
   NATIONAL: '國定假日',
+  WEEKEND: '週末',
   COMPENSATORY: '補假',
   ADJUSTED: '調整放假',
   WORKING: '補行上班',

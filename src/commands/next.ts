@@ -1,9 +1,8 @@
 import { Command } from 'commander';
 import { getHolidayService } from '../services/holiday-service.js';
-import { parseDate, getCurrentDate, addDays } from '../lib/date-parser.js';
+import { getCurrentDate, addDays } from '../lib/date-parser.js';
 import { formatDateString } from '../lib/formatter.js';
 import type { Holiday } from '../types/holiday.js';
-import { SUPPORTED_YEAR_RANGE } from '../types/holiday.js';
 import type { OutputFormat } from './check.js';
 
 /**
@@ -126,8 +125,9 @@ export function createNextCommand(): Command {
       const service = getHolidayService();
       const today = getCurrentDate();
 
-      // Search within supported year range
-      const maxYear = SUPPORTED_YEAR_RANGE.end;
+      // 搜尋上限取上游實際有資料的最後一年，避免查進尚未發布的年度
+      const availableYears = await service.getAvailableYears();
+      const maxYear = availableYears[availableYears.length - 1];
       const maxEndDate = { year: maxYear, month: 12, day: 31, normalized: `${maxYear}1231`, iso: `${maxYear}-12-31` };
       const searchEndDate = addDays(today, 365);
       const endDate = searchEndDate.normalized > maxEndDate.normalized ? maxEndDate : searchEndDate;

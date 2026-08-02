@@ -18,4 +18,10 @@ export {
 } from './lib/date-parser.js';
 
 // Constants
-export { SUPPORTED_YEAR_RANGE, HOLIDAY_TYPES, WEEKDAY_NAMES, WEEKDAY_MAP } from './types/holiday.js';
+export {
+  MIN_SUPPORTED_YEAR,
+  getMaxQueryableYear,
+  HOLIDAY_TYPES,
+  WEEKDAY_NAMES,
+  WEEKDAY_MAP,
+} from './types/holiday.js';

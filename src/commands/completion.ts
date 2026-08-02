@@ -1,12 +1,16 @@
 import { Command } from 'commander';
-import { SUPPORTED_YEAR_RANGE } from '../types/holiday.js';
+import { MIN_SUPPORTED_YEAR } from '../types/holiday.js';
 
 /**
- * 產生支援年份的字串列表
+ * 產生年份補完候選。
+ *
+ * 補完腳本是離線產生的，不能打網路，所以這裡用「到明年」當候選範圍。
+ * 這只影響 tab 補完的提示，實際可查的年份仍由上游資料決定。
  */
 function getYearsString(): string {
   const years: string[] = [];
-  for (let year = SUPPORTED_YEAR_RANGE.start; year <= SUPPORTED_YEAR_RANGE.end; year++) {
+  const lastYear = new Date().getFullYear() + 1;
+  for (let year = MIN_SUPPORTED_YEAR; year <= lastYear; year++) {
     years.push(year.toString());
   }
   return years.join(' ');
@@ -119,12 +123,12 @@ _holiday() {
     '1:command:->command' \\
     '*::arg:->args'
 
-  case "\$state" in
+  case "$state" in
     command)
       _describe -t commands 'holiday commands' commands
       ;;
     args)
-      case "\$words[1]" in
+      case "$words[1]" in
         stats|list|workdays)
           _values 'year' ${getYearsString()}
           ;;
@@ -142,7 +146,7 @@ _holiday() {
   esac
 }
 
-_holiday "\$@"
+_holiday "$@"
 `;
 }
 

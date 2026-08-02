@@ -3,6 +3,10 @@
  * 消除魔術字串和魔術數字
  */
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 // =============================================================================
 // API 相關常數
 // =============================================================================
@@ -46,9 +50,14 @@ export const CACHE_KEY_PREFIX = 'holidays_';
 export const PROJECT_NAME = 'taiwan-holiday-cli';
 
 /**
- * CLI 版本
+ * CLI 版本。
+ *
+ * 從 package.json 讀取，不在原始碼裡另存一份 —— 寫死的版本號會漂移
+ * （這裡曾是 '1.0.1' 而 health 命令回報 '1.0.0'，兩者都與 package.json 不同步）。
  */
-export const CLI_VERSION = '1.0.1';
+export const CLI_VERSION: string = JSON.parse(
+  readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'package.json'), 'utf8')
+).version;
 
 /**
  * 輸出格式類型

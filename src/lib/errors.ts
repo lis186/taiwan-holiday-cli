@@ -70,6 +70,23 @@ export class DataError extends AppError {
 }
 
 /**
+ * 上游尚未發布該年度資料。
+ *
+ * 與其他 DataError 分開成型別，是因為呼叫端需要能區分
+ * 「這一年還沒發布」（可安全跳過）與「網路壞了」（不能靜默吞掉）。
+ * 用訊息字串比對太脆弱，改一次文案就會失效。
+ */
+export class YearNotPublishedError extends DataError {
+  constructor(
+    message: string,
+    public readonly year: number
+  ) {
+    super(message);
+    this.name = 'YearNotPublishedError';
+  }
+}
+
+/**
  * 網路錯誤
  */
 export class NetworkError extends AppError {
