@@ -1,0 +1,18 @@
+{
+  "_comment": "測試碼的型別檢查。主 tsconfig 的 exclude 含 tests，所以 npm run typecheck 看不到測試 —— vitest 用 esbuild 剝型別也不檢查，型別約束會變成裝飾品。用 extends 而非複製 compilerOptions，否則主設定新增嚴格選項時這裡會漂移。",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

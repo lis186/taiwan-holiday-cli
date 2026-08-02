@@ -19,6 +19,7 @@ describe('stats command', () => {
     month: undefined,
     totalHolidays: 115,
     nationalHolidays: 10,
+    weekends: 97,
     compensatoryDays: 5,
     adjustedHolidays: 3,
     workingDays: 7,
@@ -35,6 +36,7 @@ describe('stats command', () => {
     month: 10,
     totalHolidays: 12,
     nationalHolidays: 2,
+    weekends: 9,
     compensatoryDays: 0,
     adjustedHolidays: 1,
     workingDays: 1,
@@ -81,7 +83,7 @@ describe('stats command', () => {
         const result = formatStatsResult(mockStats, 'table');
         expect(result).toContain('項目');
         expect(result).toContain('數值');
-        expect(result).toContain('總假期');
+        expect(result).toContain('總放假');
       });
     });
   });
@@ -138,7 +140,7 @@ describe('stats command', () => {
       const result = formatStatsResult(mockStats, 'table');
       expect(result).toContain('項目');
       expect(result).toContain('數值');
-      expect(result).toContain('總假期');
+      expect(result).toContain('總放假');
     });
 
     it('should format month stats as table', () => {

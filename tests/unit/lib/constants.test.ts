@@ -53,7 +53,8 @@ describe('constants', () => {
     });
 
     it('should have CLI version', () => {
-      expect(CLI_VERSION).toBe('1.0.1');
+      // 版本來自 package.json，不在此寫死；只驗格式
+      expect(CLI_VERSION).toMatch(/^\d+\.\d+\.\d+/);
       expect(CLI_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
     });
 

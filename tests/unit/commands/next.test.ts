@@ -14,6 +14,7 @@ const mockConsoleLog = createConsoleLogSpy();
 
 // Mock holiday service using helper
 const mockHolidayService = createMockHolidayService();
+mockHolidayService.getAvailableYears.mockResolvedValue([2026, 2027]);
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,

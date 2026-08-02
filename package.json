@@ -1,6 +1,6 @@
 {
   "name": "taiwan-holiday-cli",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Taiwan holiday CLI tool - Query Taiwan holidays from command line",
   "type": "module",
   "bin": {
@@ -22,22 +22,27 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src tests",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint src tests scripts",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tests.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit"
   },
   "dependencies": {
-    "commander": "^12.1.0",
     "cli-table3": "^0.6.5",
-    "ofetch": "^1.4.1",
+    "commander": "^12.1.0",
     "conf": "^13.0.1",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "ofetch": "^1.4.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@types/node": "^22.10.2",
-    "typescript": "^5.7.2",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^9.39.5",
     "tsx": "^4.21.0",
-    "vitest": "^2.1.8",
-    "@vitest/coverage-v8": "^2.1.8"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -23,9 +23,9 @@ export function createYearsCommand(): Command {
   const cmd = new Command('years')
     .description('列出支援的年份範圍')
     .option('-f, --format <format>', '輸出格式 (simple | json)', 'simple')
-    .action((options: { format: OutputFormat }) => {
+    .action(async (options: { format: OutputFormat }) => {
       const service = getHolidayService();
-      const years = service.getSupportedYears();
+      const years = await service.getAvailableYears();
       const output = formatYearsResult(years, options.format);
       console.log(output);
     });

@@ -7,7 +7,9 @@ const mockConsoleLog = createConsoleLogSpy();
 
 // Mock holiday service using helper
 const mockHolidayService = createMockHolidayService();
-mockHolidayService.getSupportedYears.mockReturnValue([2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]);
+mockHolidayService.getAvailableYears.mockResolvedValue([
+  2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027,
+]);
 
 vi.mock('../../../src/services/holiday-service.js', () => ({
   getHolidayService: () => mockHolidayService,
@@ -48,11 +50,11 @@ describe('years command', () => {
       expect(formatOption).toBeDefined();
     });
 
-    it('should execute action and output result', () => {
+    it('should execute action and output result', async () => {
       const cmd = createYearsCommand();
-      cmd.parse(['node', 'test']);
+      await cmd.parseAsync(['node', 'test']);
 
-      expect(mockHolidayService.getSupportedYears).toHaveBeenCalled();
+      expect(mockHolidayService.getAvailableYears).toHaveBeenCalled();
       expect(mockConsoleLog).toHaveBeenCalled();
     });
   });

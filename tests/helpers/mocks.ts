@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import type { HolidayStats } from '../../src/types/holiday.js';
 
 /**
  * 建立 console.log spy
@@ -29,7 +30,7 @@ export function createMockHolidayService() {
     getWorkdaysStats: vi.fn(),
     getWorkdaysBetween: vi.fn(),
     getRelatedMakeupDays: vi.fn(),
-    getSupportedYears: vi.fn(),
+    getAvailableYears: vi.fn(),
     getCacheStatus: vi.fn(),
     clearCache: vi.fn(),
     checkApiHealth: vi.fn(),
@@ -86,22 +87,24 @@ export const mockStatsData = {
   yearStats: {
     year: 2026,
     totalHolidays: 115,
-    nationalHolidays: 113,
+    nationalHolidays: 15,
+    weekends: 98,
     compensatoryDays: 2,
     adjustedHolidays: 0,
     workingDays: 2,
     holidayTypes: { '國慶日': 3 },
-  },
+  } satisfies HolidayStats,
   monthStats: {
     year: 2026,
     month: 10,
     totalHolidays: 9,
-    nationalHolidays: 8,
+    nationalHolidays: 3,
+    weekends: 5,
     compensatoryDays: 1,
     adjustedHolidays: 0,
     workingDays: 0,
     holidayTypes: { '國慶日': 3 },
-  },
+  } satisfies HolidayStats,
   workdaysStats: {
     totalDays: 31,
     workdays: 22,

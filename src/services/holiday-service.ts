@@ -1,14 +1,22 @@
 import { parseDate, getDaysInMonth, daysBetween, getYearsInRange } from '../lib/date-parser.js';
-import { ServiceError, ValidationError } from '../lib/errors.js';
+import { ServiceError, ValidationError, YearNotPublishedError } from '../lib/errors.js';
 import { HolidayRepository, RepositoryError } from './holiday-repository.js';
 import type { Holiday, HolidayStats, WorkdaysStats } from '../types/holiday.js';
-import { SUPPORTED_YEAR_RANGE, HOLIDAY_TYPES } from '../types/holiday.js';
+import { MIN_SUPPORTED_YEAR, HOLIDAY_TYPES } from '../types/holiday.js';
 
 /**
  * 假期服務錯誤（向後相容別名）
  * @deprecated 請使用 ServiceError
  */
 export const HolidayServiceError = ServiceError;
+
+/**
+ * 這個錯誤是否代表「上游尚未發布該年度」（可安全跳過），
+ * 而不是網路故障之類不該被吞掉的問題。
+ */
+function isYearNotPublished(error: unknown): boolean {
+  return error instanceof YearNotPublishedError;
+}
 
 /**
  * 範圍查詢選項
@@ -43,6 +51,11 @@ export class HolidayService {
     try {
       return await this.repository.getHolidaysForYear(year);
     } catch (error) {
+      // 「尚未發布」要保留原型別往上傳，呼叫端需要靠它區分
+      // 「這一年還沒發布」與「網路壞了」。包成 ServiceError 會抹掉這個資訊。
+      if (error instanceof YearNotPublishedError) {
+        throw error;
+      }
       if (error instanceof RepositoryError) {
         throw new ServiceError(error.message);
       }
@@ -216,12 +229,24 @@ export class HolidayService {
     const years = getYearsInRange(start, end, 1);
 
     for (const year of years) {
-      if (year >= SUPPORTED_YEAR_RANGE.start && year <= SUPPORTED_YEAR_RANGE.end) {
-        const holidays = await this.getHolidaysForYear(year);
-        for (const holiday of holidays) {
-          if (holiday.description.includes('補行上班')) {
-            result.push(holiday);
-          }
+      if (year < MIN_SUPPORTED_YEAR) {
+        continue;
+      }
+      // 前後擴展一個月可能跨進上游還沒有資料的年份，那種情況跳過即可。
+      // 但只跳過「尚未發布」—— DNS 失敗、5xx、解析錯誤若也被吞掉，
+      // 補班日就會靜默漏報，而使用者拿到的是一個看似完整的答案。
+      let holidays: Holiday[];
+      try {
+        holidays = await this.getHolidaysForYear(year);
+      } catch (error) {
+        if (isYearNotPublished(error)) {
+          continue;
+        }
+        throw error;
+      }
+      for (const holiday of holidays) {
+        if (holiday.description.includes('補行上班')) {
+          result.push(holiday);
         }
       }
     }
@@ -230,14 +255,10 @@ export class HolidayService {
   }
 
   /**
-   * 取得支援的年份列表
+   * 取得上游實際可查的年份列表
    */
-  getSupportedYears(): number[] {
-    const years: number[] = [];
-    for (let year = SUPPORTED_YEAR_RANGE.start; year <= SUPPORTED_YEAR_RANGE.end; year++) {
-      years.push(year);
-    }
-    return years;
+  async getAvailableYears(): Promise<number[]> {
+    return this.repository.getAvailableYears();
   }
 
   /**
@@ -268,6 +289,7 @@ export class HolidayService {
     const holidayTypes: Record<string, number> = {};
     let totalHolidays = 0;
     let nationalHolidays = 0;
+    let weekends = 0;
     let compensatoryDays = 0;
     let adjustedHolidays = 0;
     let workingDays = 0;
@@ -277,21 +299,31 @@ export class HolidayService {
         totalHolidays++;
 
         const description = holiday.description.toLowerCase();
+        let categoryKey: string;
 
         if (description.includes('補假')) {
           compensatoryDays++;
-          holidayTypes[HOLIDAY_TYPES.COMPENSATORY] =
-            (holidayTypes[HOLIDAY_TYPES.COMPENSATORY] || 0) + 1;
+          categoryKey = HOLIDAY_TYPES.COMPENSATORY;
         } else if (description.includes('調整放假')) {
           adjustedHolidays++;
-          holidayTypes[HOLIDAY_TYPES.ADJUSTED] = (holidayTypes[HOLIDAY_TYPES.ADJUSTED] || 0) + 1;
+          categoryKey = HOLIDAY_TYPES.ADJUSTED;
+        } else if (!holiday.description || holiday.description === HOLIDAY_TYPES.WEEKEND) {
+          // 上游把一般週末的 description 留空。這些日子過去被算進
+          // nationalHolidays，導致 2026 年回報 114 個「國定假日」
+          // （實際具名國定假日只有 16 個，其餘 98 個是週末）。
+          //
+          // 也接受字面「週末」：本次新增的 WEEKEND 桶名讓它成為新的碰撞候選，
+          // 若上游哪天改用該字串，不在這裡處理就會既算成國定假日、又汙染週末桶。
+          weekends++;
+          categoryKey = HOLIDAY_TYPES.WEEKEND;
         } else {
           nationalHolidays++;
-          holidayTypes[HOLIDAY_TYPES.NATIONAL] = (holidayTypes[HOLIDAY_TYPES.NATIONAL] || 0) + 1;
+          categoryKey = HOLIDAY_TYPES.NATIONAL;
         }
+        holidayTypes[categoryKey] = (holidayTypes[categoryKey] || 0) + 1;
 
-        // 記錄具體假日類型
-        if (holiday.description) {
+        // 記錄具體假日類型；描述與分類桶同名時（例如「補假」）不重複計
+        if (holiday.description && holiday.description !== categoryKey) {
           holidayTypes[holiday.description] = (holidayTypes[holiday.description] || 0) + 1;
         }
       } else if (holiday.description.includes('補行上班')) {
@@ -305,6 +337,7 @@ export class HolidayService {
       month,
       totalHolidays,
       nationalHolidays,
+      weekends,
       compensatoryDays,
       adjustedHolidays,
       workingDays,

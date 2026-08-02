@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { getHolidayService } from '../services/holiday-service.js';
+import { CLI_VERSION } from '../lib/constants.js';
 import type { OutputFormat } from './check.js';
 
 export interface HealthStatus {
@@ -83,7 +84,7 @@ export function createHealthCommand(): Command {
           itemCount: cacheItemCount,
         },
         api: apiHealth,
-        version: '1.0.0',
+        version: CLI_VERSION,
       };
 
       const output = formatHealthResult(health, options.format);
