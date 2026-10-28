@@ -20,7 +20,7 @@
 | 類別 | 技術 |
 |------|------|
 | 語言 | TypeScript |
-| Runtime | Node.js >= 20.0.0 |
+| Runtime | Node.js >= 22.0.0 |
 | CLI Framework | Commander.js |
 | HTTP Client | ofetch |
 | 表格輸出 | cli-table3 |
@@ -34,7 +34,7 @@
 
 | 項目 | 支援範圍 |
 |------|----------|
-| Node.js | 20, 22 |
+| Node.js | 22, 24 |
 | macOS | arm64, x64 |
 | Linux | arm64, x64 |
 | Windows | x64 |
