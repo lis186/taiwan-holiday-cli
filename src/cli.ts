@@ -10,6 +10,7 @@ import { createNextCommand } from './commands/next.js';
 import { createMonthCommand } from './commands/month.js';
 import { createWorkdaysCommand } from './commands/workdays.js';
 import { createBetweenCommand } from './commands/between.js';
+import { createTyphoonCommand } from './commands/typhoon.js';
 import { createCacheCommand } from './commands/cache.js';
 import { createConfigCommand } from './commands/config.js';
 import { createHealthCommand } from './commands/health.js';
@@ -18,6 +19,7 @@ import { CLI_VERSION, KNOWN_COMMANDS } from './lib/constants.js';
 import { AppError, getExitCode, formatErrorMessage } from './lib/errors.js';
 import { output } from './lib/output.js';
 import { getHolidayService } from './services/holiday-service.js';
+import { getTyphoonService } from './services/typhoon-service.js';
 
 const program = new Command();
 
@@ -33,6 +35,7 @@ program.hook('preAction', (thisCommand) => {
   if (opts.cache === false) {
     const service = getHolidayService();
     service.setBypassCache(true);
+    getTyphoonService().setBypassCache(true);
   }
 });
 
@@ -47,6 +50,7 @@ program.addCommand(createNextCommand());
 program.addCommand(createMonthCommand());
 program.addCommand(createWorkdaysCommand());
 program.addCommand(createBetweenCommand());
+program.addCommand(createTyphoonCommand());
 program.addCommand(createCacheCommand());
 program.addCommand(createConfigCommand());
 program.addCommand(createHealthCommand());

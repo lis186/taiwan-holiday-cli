@@ -31,10 +31,21 @@ export function getDaysInMonth(year: number, month: number): number {
 }
 
 /**
- * 取得目前日期
+ * 臺灣（Asia/Taipei）的現在時刻。
+ *
+ * 回傳的 Date 其本地欄位（getFullYear/getMonth/getDate/getDay）等於臺北的牆上時間。
+ * 「今天」必須以臺灣為準：CLI 常在 UTC 主機上執行（CI、雲端、透過 npx 呼叫的 LLM 工具），
+ * 用主機時區的話，臺灣早上 0–8 點會被當成前一天。
+ */
+export function taipeiNow(): Date {
+  return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
+}
+
+/**
+ * 取得目前日期（臺灣時間）
  */
 export function getCurrentDate(): ParsedDate {
-  const now = new Date();
+  const now = taipeiNow();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
   const day = now.getDate();
@@ -47,7 +58,7 @@ export function getCurrentDate(): ParsedDate {
  * 取得目前年份
  */
 export function getCurrentYear(): number {
-  return new Date().getFullYear();
+  return taipeiNow().getFullYear();
 }
 
 /**
@@ -160,7 +171,7 @@ export function getWeekdayName(year: number, month: number, day: number): string
 /**
  * 解析標準日期格式
  */
-export function parseDate(dateStr: string): ParsedDate {
+export function parseDate(dateStr: string, minYear: number = MIN_SUPPORTED_YEAR): ParsedDate {
   // 先嘗試解析相對日期
   const relativeResult = parseRelativeDate(dateStr);
   if (relativeResult) {
@@ -190,9 +201,9 @@ export function parseDate(dateStr: string): ParsedDate {
   }
 
   // 驗證年份範圍
-  if (year < MIN_SUPPORTED_YEAR || year > getMaxQueryableYear()) {
+  if (year < minYear || year > getMaxQueryableYear()) {
     throw new DateValidationError(
-      `年份 ${year} 超出可查詢範圍 (${MIN_SUPPORTED_YEAR}-${getMaxQueryableYear()})`
+      `年份 ${year} 超出可查詢範圍 (${minYear}-${getMaxQueryableYear()})`
     );
   }
 
@@ -239,7 +250,7 @@ const WEEKDAY_MAP: Record<string, number> = {
  */
 export function parseRelativeDate(dateStr: string): ParsedDate | null {
   const lower = dateStr.toLowerCase().trim();
-  const now = new Date();
+  const now = taipeiNow();
 
   let targetDate: Date | null = null;
 

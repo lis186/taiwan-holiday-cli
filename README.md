@@ -16,6 +16,7 @@
 - 支援自然語言日期輸入（today, tomorrow, next monday...）
 - 查詢日期範圍內的假期
 - 計算工作天數統計
+- 查詢颱風假（天然災害停止上班上課）歸檔紀錄，資料自 2001-07-30 起
 - 支援多種輸出格式（simple, json, table）
 - 內建快取機制，離線可用
 - Shell 自動補全支援
@@ -106,6 +107,37 @@ holiday workdays 2026-01
 holiday between <start> <end>
 holiday between 2026-01-01 2026-01-31
 ```
+
+### 颱風假查詢
+
+```bash
+holiday typhoon                       # 今天（臺灣時間）
+holiday typhoon 2024-10-31 -c 台北市   # 指定縣市；台／臺視為相同
+holiday typhoon 2024-10-31 -f json    # 給腳本或 LLM 使用
+```
+
+第一行就是答案，並標明能不能信：
+
+```
+2024-10-31 臺北市：停止上班（全天）、停止上課（全天）〔已定案〕
+```
+
+JSON 的頂層 `work`／`school` 是結論，`status` 為下列之一：
+
+| `status` | 意義 |
+|---|---|
+| `stopped` | 全縣市停止，時段見 `period`／`from` |
+| `conditional` | 只有部分子區域、部分學制或部分時段停止，要看 `cities[].rows` 判斷是否適用。未指定縣市時，只要有任何停止就是這個值 |
+| `normal` | 有公告且照常；或事件後超過 21 天仍無任何公告（`basis: "no_announcement"`） |
+| `unknown` | 無法判斷，**不可當成照常**。原因見 `reason`：`pending`（距今 21 天內，歸檔可能還沒收錄）、`source_not_ready`（當年度資料檔尚未產生），或記錄無法解析 |
+
+`basis` 說明依據：`own`（當日公告）、`forecast`（前一天公告的「明天」預告，可能被推翻）、`no_announcement`。
+
+注意事項：
+
+- **這是歸檔紀錄，不是即時資訊。** 歸檔通常在事件後 1～5 天才收錄（最久 19 天），所以今天、明天與最近幾天的結果多半是 `unknown`。即時狀況請看 [DGPA 天然災害停止上班及上課情形](https://www.dgpa.gov.tw/typh/daily/nds.html) 及各縣市政府公告。
+- 縣市名保留當時名稱（如改制前的臺北縣），不對應現行行政區。
+- 無法結構化的記錄會保留原文（`rows[].raw`），請以原文為準。
 
 ### 其他命令
 
@@ -236,6 +268,8 @@ MCP server 版本（Claude Desktop / Cursor 等 MCP client 適用）：[`taiwan-
 ## Data Source
 
 假期資料來自 [TaiwanCalendar](https://github.com/ruyut/TaiwanCalendar) 專案，感謝 [@ruyut](https://github.com/ruyut) 的維護。
+
+颱風假資料來自 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays)，由行政院人事行政總處公告整理而成，每日自動更新。
 
 ## Development
 

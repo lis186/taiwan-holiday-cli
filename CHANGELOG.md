@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `holiday typhoon [date] [-c, --city <city>]`：查詢颱風假（天然災害停止上班上課）歸檔紀錄，
+  資料來自 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays)，涵蓋 2001-07-30 起；省略日期為今天。
+  頂層直接給上班／上課結論（`stopped`／`conditional`／`normal`／`unknown`），並標明依據（當日公告或前一日預告）
+  與是否定案；距今 21 天內沒有紀錄時回 `unknown`，不說成照常。
+- 函式庫匯出 `evaluateTyphoon`（純函式）、`TyphoonService`、`getTyphoonService`、`normalizeCity` 與相關型別，
+  以及 `getCurrentDate`、`taipeiNow`。
+
+### Changed
+
+- `parseDate` 新增選用參數 `minYear`（預設仍為 `MIN_SUPPORTED_YEAR`），既有命令行為不變。
+
+### Fixed
+
+- 「今天」改以臺灣時間（Asia/Taipei）計算。過去用主機時區，在 UTC 主機（CI、雲端、透過 npx 呼叫的 LLM 工具）上，
+  臺灣早上 0–8 點的 `today`、`tomorrow`、`next` 等會差一天。影響所有命令。
+
 ## [2.0.0] - 2026-08-02
 
 年份支援不再寫死在套件裡，並修正兩個長期存在的統計錯誤。
