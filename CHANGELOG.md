@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Breaking:** `engines.node` 由 `>=20.0.0` 改為 `>=22.0.0`。Node 20 已於 2026-04-30 EOL，
+  22 是目前仍有安全更新的最舊 LTS（至 2027-04-30）。CI 矩陣改為 Node 22、24。
+
 ## [2.1.0] - 2026-10-28
 
 ### Added
