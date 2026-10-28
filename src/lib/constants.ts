@@ -133,6 +133,11 @@ export const TYPHOON_API_BASE_URL = 'https://raw.githubusercontent.com/lis186/Ta
 export const TYPHOON_API_FALLBACK_URL = 'https://cdn.jsdelivr.net/gh/lis186/TaiwanTyphoonDays/data';
 
 /**
+ * DGPA 天然災害停止上班及上課情形即時頁（靜態 UTF-8 HTML，格式非官方承諾）
+ */
+export const TYPHOON_LIVE_URL = 'https://www.dgpa.gov.tw/typh/daily/nds.html';
+
+/**
  * 颱風假快取 key 前綴（與假期資料分開）
  */
 export const TYPHOON_CACHE_KEY_PREFIX = 'typhoon_';

@@ -65,6 +65,9 @@ function verdictLabel(v: TyphoonVerdict, kind: '上班' | '上課'): string {
 }
 
 function finalityLabel(result: TyphoonQueryResult): string {
+  if (result.reason === 'live') {
+    return result.basis === 'forecast' ? '即時：今天公告的明天預告，可能更新' : '即時，可能更新';
+  }
   if (result.reason === 'pending') return '尚未定案';
   if (result.reason === 'source_not_ready') return '資料源未就緒';
   if (result.basis === 'no_announcement') return '已定案：當日無停班停課公告';
@@ -108,7 +111,11 @@ export function formatTyphoonResult(result: TyphoonQueryResult, format: OutputFo
   ];
   if (!result.city && rows.length > 0) lines[0] += `（${result.cities.length} 個縣市有公告）`;
   for (const area of rows) lines.push(`  ${areaName(area)}：${areaStatus(area)}`);
-  if (result.source.url) lines.push(`來源：${result.source.url}`);
+  if (result.source.kind === 'live') {
+    lines.push(`來源：${result.source.url}（即時頁，更新時間 ${result.source.updatedAt || '未標示'}）`);
+  } else if (result.source.url) {
+    lines.push(`來源：${result.source.url}`);
+  }
   for (const note of result.notes) lines.push(`※ ${note}`);
   return lines.join('\n');
 }
@@ -118,7 +125,7 @@ export function formatTyphoonResult(result: TyphoonQueryResult, format: OutputFo
  */
 export function createTyphoonCommand(): Command {
   const cmd = new Command('typhoon')
-    .description('查詢颱風假（天然災害停止上班上課）歸檔紀錄，資料自 2001-07-30 起；省略日期為今天')
+    .description('查詢颱風假（天然災害停止上班上課）：今天、明天看 DGPA 即時頁，其他日期看歸檔（2001-07-30 起）；省略日期為今天')
     .argument('[date]', '日期 (支援 YYYY-MM-DD, YYYYMMDD, today, yesterday 等)', 'today')
     .option('-c, --city <city>', '只看指定縣市（字面比對，如 臺北市；台／臺視為相同）')
     .option('-f, --format <format>', '輸出格式 (simple | json | table)', 'simple')

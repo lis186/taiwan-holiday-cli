@@ -1,5 +1,7 @@
 import { addDays, daysBetween, getCurrentDate, parseDate } from '../lib/date-parser.js';
-import { ValidationError } from '../lib/errors.js';
+import { DataError, ValidationError } from '../lib/errors.js';
+import { TYPHOON_LIVE_URL } from '../lib/constants.js';
+import type { ParsedPage } from '../lib/typhoon-live-parser.js';
 import { TyphoonRepository } from './typhoon-repository.js';
 import type { ParsedDate } from '../types/holiday.js';
 import type {
@@ -213,14 +215,117 @@ export function evaluateTyphoon(
       url: basis !== 'no_announcement' ? (source?.sourceUrl ?? null) : null,
       announcementDate: basis !== 'no_announcement' ? (source?.date ?? null) : null,
       updatedAt: basis !== 'no_announcement' ? (source?.updatedAt ?? '') : '',
+      fetchedAt: null,
     },
     cities,
     notes,
   };
 }
 
+export interface EvaluateLiveOptions {
+  city?: string;
+  /** 即時頁抓取時間（ISO 8601） */
+  fetchedAt: string;
+}
+
 /**
- * 颱風假服務：負責抓資料，結論交給 evaluateTyphoon。
+ * 從即時頁算出今天或明天的結論。純函式。
+ *
+ * 把頁面當成一則 date = 頁首日期 的公告交給 evaluateTyphoon：查今天走「當日公告」，
+ * 查明天走「前一日預告」；頁面還沒跨日時查今天也自然落在預告路徑。再依即時頁的語意修正：
+ *
+ * | 查詢日   | 頁面狀態                         | 結論    | basis           |
+ * |----------|----------------------------------|---------|-----------------|
+ * | 頁首日   | 「無停班停課訊息」               | normal  | no_announcement |
+ * | 頁首日   | 該縣市有記錄                     | 依記錄  | own             |
+ * | 頁首日   | 該縣市有列出但全是略過的句子     | unknown | own             |
+ * | 頁首日   | 該縣市沒列出（其他縣市有）       | normal  | no_announcement |
+ * | 頁首日+1 | 有明天的記錄                     | 依記錄  | forecast        |
+ * | 頁首日+1 | 沒有明天的記錄（含無停班停課）   | unknown | no_announcement |
+ *
+ * 所有結果 reason 都是 'live'：即時狀態當天仍可能更新。
+ * 找不到任何縣市列、也沒有「無停班停課訊息」代表頁面格式變了，拋出錯誤，不可當成沒有。
+ */
+export function evaluateLive(
+  page: ParsedPage,
+  target: ParsedDate,
+  options: EvaluateLiveOptions
+): TyphoonQueryResult {
+  if (page.rows === 0 && !page.noticeNone) {
+    throw new DataError('即時頁格式無法辨識：找不到縣市列，也沒有「無停班停課訊息」');
+  }
+  const pageDate = parseDate(page.pageDate, TYPHOON_MIN_YEAR);
+  const event: TyphoonEvent = {
+    date: page.pageDate,
+    publishedAt: page.pageDate,
+    updatedAt: page.updatedAt,
+    sourceUrl: TYPHOON_LIVE_URL,
+    parsed: true,
+    areas: page.areas,
+  };
+  const r = evaluateTyphoon([event], target, { city: options.city, today: pageDate });
+  const isToday = target.normalized === page.pageDate;
+  const isTomorrow = target.normalized === addDays(pageDate, 1).normalized;
+
+  const notes: string[] = [
+    `即時資料（頁面更新時間 ${page.updatedAt || '未標示'}），當天仍可能更新；以各縣市政府公告為準。`,
+  ];
+  let { work, school, basis } = r;
+
+  if (isToday && page.noticeNone) {
+    work = NORMAL;
+    school = NORMAL;
+    basis = 'no_announcement';
+    notes.push('即時頁顯示「無停班停課訊息」。');
+  } else if (isToday && r.cities.length === 0) {
+    const listed = r.city ? page.cities.includes(r.city) : page.cities.length > 0;
+    if (listed) {
+      work = UNKNOWN;
+      school = UNKNOWN;
+      basis = 'own';
+      notes.push('有列出，但內容是「尚未宣布消息」或「尚未列入警戒區」之類的句子，無法判斷，請看來源原文。');
+    } else {
+      work = NORMAL;
+      school = NORMAL;
+      basis = 'no_announcement';
+      notes.push(`目前沒有${r.city ? `「${r.city}」的` : ''}停班停課公告，之後仍可能公告。`);
+    }
+  } else if (isTomorrow && r.cities.length === 0) {
+    work = UNKNOWN;
+    school = UNKNOWN;
+    basis = 'no_announcement';
+    notes.push('即時頁目前沒有明天的停班停課公告。明天的狀況通常在前一天晚上公告，請稍後再查。');
+  } else if (!isToday && !isTomorrow) {
+    work = UNKNOWN;
+    school = UNKNOWN;
+    notes.push(`即時頁的日期（${page.pageDate}）與查詢日不符，無法判斷。`);
+  }
+  if (basis === 'forecast') {
+    notes.push('依據是今天公告的「明天」預告，明天當日仍可能改變。');
+  }
+  if (r.cities.some((c) => c.rows.some((row) => row.work === null || row.school === null))) {
+    notes.push('部分記錄無法結構化解析，請讀 rows[].raw 原文。');
+  }
+
+  return {
+    ...r,
+    work,
+    school,
+    basis,
+    reason: 'live',
+    source: {
+      kind: 'live',
+      url: TYPHOON_LIVE_URL,
+      announcementDate: page.pageDate,
+      updatedAt: page.updatedAt,
+      fetchedAt: options.fetchedAt,
+    },
+    notes,
+  };
+}
+
+/**
+ * 颱風假服務：負責抓資料，結論交給 evaluateTyphoon／evaluateLive。
  */
 export class TyphoonService {
   private readonly repository: TyphoonRepository;
@@ -244,6 +349,20 @@ export class TyphoonService {
       );
     }
 
+    // 今天、明天：歸檔還沒收錄，先看即時頁；抓不到或格式不認得才退回歸檔結果並註明
+    const today = getCurrentDate();
+    const isLiveDate =
+      target.normalized === today.normalized || target.normalized === addDays(today, 1).normalized;
+    let liveFailure: string | null = null;
+    if (isLiveDate) {
+      try {
+        const { page, fetchedAt } = await this.repository.getLivePage();
+        return evaluateLive(page, target, { city, fetchedAt });
+      } catch (error) {
+        liveFailure = error instanceof Error ? error.message : String(error);
+      }
+    }
+
     // 讀查詢日與前一天所在年度（跨年時 12/31 的公告會預告 1/1）
     const years = [...new Set([addDays(target, -1).year, target.year])].filter(
       (y) => y >= TYPHOON_MIN_YEAR
@@ -256,7 +375,12 @@ export class TyphoonService {
       else events.push(...data);
     }
 
-    return evaluateTyphoon(events, target, { city, today: getCurrentDate(), sourceNotReady });
+    const archived = evaluateTyphoon(events, target, { city, today, sourceNotReady });
+    if (liveFailure === null) return archived;
+    return {
+      ...archived,
+      notes: [`即時頁無法取得或無法解析（${liveFailure}），以下為歸檔結果。`, ...archived.notes],
+    };
   }
 }
 

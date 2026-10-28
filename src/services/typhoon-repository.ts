@@ -4,9 +4,12 @@ import {
   TYPHOON_API_BASE_URL,
   TYPHOON_API_FALLBACK_URL,
   TYPHOON_CACHE_KEY_PREFIX,
+  TYPHOON_LIVE_URL,
   API_TIMEOUT_MS,
   CACHE_TTL_MS,
+  CLI_VERSION,
 } from '../lib/constants.js';
+import { parsePage, type ParsedPage } from '../lib/typhoon-live-parser.js';
 import { getCurrentYear } from '../lib/date-parser.js';
 import { DataError, ValidationError } from '../lib/errors.js';
 import type { TyphoonEvent } from '../types/typhoon.js';
@@ -85,6 +88,21 @@ export class TyphoonRepository {
         throw fallbackError;
       }
     }
+  }
+
+  /**
+   * 抓 DGPA 即時頁並解析。每次呼叫都重新抓：CLI 是一次性程序，記憶體快取跨不了呼叫，
+   * 而即時頁本身就是 no-cache。頁面只有約 15 KB，一次呼叫一個請求。
+   */
+  async getLivePage(): Promise<{ page: ParsedPage; fetchedAt: string }> {
+    const html: string = await ofetch(TYPHOON_LIVE_URL, {
+      timeout: this.timeout,
+      responseType: 'text',
+      headers: {
+        'User-Agent': `taiwan-holiday-cli/${CLI_VERSION} (+https://github.com/lis186/taiwan-holiday-cli)`,
+      },
+    });
+    return { page: parsePage(html), fetchedAt: new Date().toISOString() };
   }
 
   private async fetchOnce(baseUrl: string, year: number): Promise<TyphoonEvent[]> {

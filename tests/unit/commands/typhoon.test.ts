@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTyphoonCommand, formatTyphoonResult } from '../../../src/commands/typhoon.js';
-import { evaluateTyphoon } from '../../../src/services/typhoon-service.js';
+import { evaluateLive, evaluateTyphoon } from '../../../src/services/typhoon-service.js';
 import { parseDate } from '../../../src/lib/date-parser.js';
 import type { TyphoonArea, TyphoonEvent, TyphoonQueryResult } from '../../../src/types/typhoon.js';
 
@@ -84,6 +84,19 @@ describe('typhoon command', () => {
     it('says settled no-announcement for an old day without records', () => {
       const out = formatTyphoonResult(evaluate([], '2024-05-05'), 'simple');
       expect(out.split('\n')[0]).toBe('2024-05-05：照常上班、照常上課〔已定案：當日無停班停課公告〕');
+    });
+  });
+
+  describe('formatTyphoonResult live', () => {
+    it('labels live results and shows the page update time', () => {
+      const r = evaluateLive(
+        { pageDate: '20261028', updatedAt: '2026-10-28T06:30:00', noticeNone: true, areas: [], rows: 0, cities: [] },
+        parseDate('2026-10-28'),
+        { city: '臺北市', fetchedAt: '2026-10-28T07:00:00.000Z' }
+      );
+      const out = formatTyphoonResult(r, 'simple');
+      expect(out.split('\n')[0]).toBe('2026-10-28 臺北市：照常上班、照常上課〔即時，可能更新〕');
+      expect(out).toContain('（即時頁，更新時間 2026-10-28T06:30:00）');
     });
   });
 

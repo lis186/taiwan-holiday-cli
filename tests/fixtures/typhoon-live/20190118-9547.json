@@ -1,0 +1,17 @@
+{
+  "pageDate": "20190118",
+  "updatedAt": "2019-01-18T23:59:02",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "桃園市",
+      "scope": "桃園市大園區溪海國民小學",
+      "forDate": "20190118",
+      "work": "normal",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "桃園市大園區溪海國民小學:今天照常上班、停止上課。"
+    }
+  ]
+}

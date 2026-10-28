@@ -1,0 +1,17 @@
+{
+  "pageDate": "20210811",
+  "updatedAt": "2021-08-11T23:58:05",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "高雄市",
+      "scope": "高雄市桃源區復興里、拉芙蘭里、梅山里",
+      "forDate": "20210811",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "高雄市桃源區復興里、拉芙蘭里、梅山里:今天停止上班、停止上課。"
+    }
+  ]
+}

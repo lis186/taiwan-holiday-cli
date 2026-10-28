@@ -1,0 +1,47 @@
+{
+  "pageDate": "20171015",
+  "updatedAt": "2017-10-15T18:39:46",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "花蓮縣",
+      "scope": "花蓮縣秀林鄉天祥、西寶、洛韶、關原地區",
+      "forDate": "20171015",
+      "work": "stop",
+      "school": "stop",
+      "period": "afternoon",
+      "from": "",
+      "raw": "花蓮縣秀林鄉天祥、西寶、洛韶、關原地區: 今天下午已達停止上班及上課標準。"
+    },
+    {
+      "city": "花蓮縣",
+      "scope": "",
+      "forDate": "20171015",
+      "work": null,
+      "school": null,
+      "period": null,
+      "from": "",
+      "raw": "花蓮縣秀林鄉天祥、西寶、洛韶地區今天六點起至十二點: 今天上午已達停止上班及上課標準。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "關山鎮、池上鄉、東河鄉、海端鄉、延平鄉",
+      "forDate": "20171015",
+      "work": "stop",
+      "school": "stop",
+      "period": "afternoon",
+      "from": "",
+      "raw": "關山鎮、池上鄉、東河鄉、海端鄉、延平鄉: 今天下午已達停止上班及上課標準。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "臺東縣延平鄉紅葉村、臺東縣延平鄉桃源村下里地區、臺東縣延平鄉鸞山村上野地區",
+      "forDate": "20171015",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "臺東縣延平鄉紅葉村、臺東縣延平鄉桃源村下里地區、臺東縣延平鄉鸞山村上野地區: 今天已達停止上班及上課標準。"
+    }
+  ]
+}

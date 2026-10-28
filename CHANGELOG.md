@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `holiday typhoon [date] [-c, --city <city>]`：查詢颱風假（天然災害停止上班上課）歸檔紀錄，
+- `holiday typhoon [date] [-c, --city <city>]`：查詢颱風假（天然災害停止上班上課）。今天、明天直接讀
+  [DGPA 即時頁](https://www.dgpa.gov.tw/typh/daily/nds.html)，結果標 `reason: "live"`，抓不到時退回歸檔；其他日期讀歸檔紀錄，
   資料來自 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays)，涵蓋 2001-07-30 起；省略日期為今天。
   頂層直接給上班／上課結論（`stopped`／`conditional`／`normal`／`unknown`），並標明依據（當日公告或前一日預告）
   與是否定案；距今 21 天內沒有紀錄時回 `unknown`，不說成照常。

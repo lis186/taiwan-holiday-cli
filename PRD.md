@@ -469,7 +469,7 @@ $ holiday completion fish >> ~/.config/fish/completions/holiday.fish
 
 #### 2.2.16 `holiday typhoon [date]`
 
-查詢颱風假（天然災害停止上班上課）歸檔紀錄。資料來源為 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays)，
+查詢颱風假（天然災害停止上班上課）。今天、明天讀 DGPA 即時頁（見下方），其他日期讀歸檔。歸檔資料來源為 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays)，
 主來源 `https://raw.githubusercontent.com/lis186/TaiwanTyphoonDays/master/data/{year}.json`（快取 5 分鐘），
 網路錯誤時改用 jsDelivr（邊緣快取最長 12 小時）。涵蓋 2001-07-30 起。
 
@@ -508,7 +508,29 @@ $ holiday typhoon 2024-10-31 --city 臺北市
 來源：https://www.dgpa.gov.tw/information?uid=374&pid=12171
 ```
 
-**備註：** `health` 仍只檢查假期資料源；`--no-cache` 同時作用於颱風假資料。即時頁（`nds.html`）與子區域過濾（`--area`）為後續切片。
+**即時頁（今天、明天）：** 直接 GET `https://www.dgpa.gov.tw/typh/daily/nds.html`（帶 User-Agent，每次查詢一個請求），
+由 `src/lib/typhoon-live-parser.ts` 解析。解析器逐條移植自上游 `scripts/parse.py`（`parse_page` 以下），保持嚴格文法。
+把頁面視為一則 `date = 頁首日期` 的公告交給 `evaluateTyphoon`，再依下表修正；所有結果 `reason: 'live'`、`source.kind: 'live'`。
+
+| 查詢日 | 頁面狀態 | 結論 | basis |
+|---|---|---|---|
+| 頁首日 | 「無停班停課訊息」 | normal | no_announcement |
+| 頁首日 | 該縣市有記錄 | 依記錄 | own |
+| 頁首日 | 有列出但全是「尚未宣布消息」等略過的句子 | unknown | own |
+| 頁首日 | 沒列出（其他縣市有） | normal（目前沒有公告） | no_announcement |
+| 頁首日+1 | 有明天的記錄 | 依記錄 | forecast |
+| 頁首日+1 | 沒有明天的記錄（含「無停班停課訊息」） | unknown | no_announcement |
+
+找不到縣市列、也沒有「無停班停課訊息」→ 格式不認得，拋錯；服務層退回歸檔結果並在 notes 註明。頁面跨日前（00:00 後仍顯示前一天），查今天會自然落在預告路徑。
+
+**即時解析器的驗證：**
+- 句級：上游 `data/` 全量 7,793 筆記錄（1,689 種句子）逐欄一致（`tests/corpus/`，需設定 `TYPHOON_DATA_DIR`，CI 不跑）。
+- 格級：上游 11 份格級 fixtures（10 份 2017–2026 附件 + 2026-10-28 即時頁，複製於 `tests/fixtures/typhoon-live/`，釘住上游 commit `3b635f8`）逐欄一致，CI 會跑；另於本機以 2017 年起全部 311 份附件整頁解析，與上游 `data/` 完全一致（2026-10-28）。
+- 突變測試：改掉「晚上」轉 24 小時制，句級測試即失敗。
+
+**已知缺口：** 條件 GET（ETag）與「更新時間不倒退」需要跨呼叫的磁碟快取，現有快取只在單一程序的記憶體中，故未實作；多台後端可能回傳舊幾分鐘的頁面。
+
+**備註：** `health` 仍只檢查假期資料源；`--no-cache` 同時作用於颱風假歸檔資料（即時頁每次都重抓）。子區域過濾（`--area`）為後續切片。
 
 ---
 

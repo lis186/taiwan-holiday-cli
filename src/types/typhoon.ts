@@ -78,8 +78,9 @@ export type TyphoonBasis = 'own' | 'forecast' | 'no_announcement';
  * 結論可能還會變的原因；null 表示已定案
  * - pending：查詢日距今在歸檔延遲窗口內（或在未來），歸檔可能還沒收錄
  * - source_not_ready：當年度資料檔尚不存在（每年 1 月 1 日首次更新前）
+ * - live：取自即時頁，當天仍可能更新（例如上午宣布下午停班，之後改成全天）
  */
-export type TyphoonReason = 'pending' | 'source_not_ready' | null;
+export type TyphoonReason = 'pending' | 'source_not_ready' | 'live' | null;
 
 /** 颱風假查詢結果 */
 export interface TyphoonQueryResult {
@@ -93,13 +94,16 @@ export interface TyphoonQueryResult {
   basis: TyphoonBasis;
   reason: TyphoonReason;
   source: {
-    kind: 'archive';
+    /** archive：歸檔資料；live：DGPA 即時頁 */
+    kind: 'archive' | 'live';
     /** 採用的公告原始頁；沒有公告時為 null */
     url: string | null;
     /** 公告的事件日 YYYYMMDD（basis 為 forecast 時早於查詢日） */
     announcementDate: string | null;
-    /** 附件內標示的更新時間（臺灣時間）；舊資料可能為空字串 */
+    /** 頁面或附件標示的更新時間（臺灣時間）；舊資料可能為空字串 */
     updatedAt: string;
+    /** 即時頁的抓取時間（ISO 8601）；歸檔為 null */
+    fetchedAt: string | null;
   };
   cities: TyphoonCityResult[];
   /** 給人與 LLM 的提醒 */

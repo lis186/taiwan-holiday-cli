@@ -1,0 +1,37 @@
+{
+  "pageDate": "20180914",
+  "updatedAt": "2018-09-14T23:59:02",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "花蓮縣",
+      "scope": "",
+      "forDate": "20180915",
+      "work": "normal",
+      "school": "normal",
+      "period": "allDay",
+      "from": "",
+      "raw": "明天未達停止上班及上課標準。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "",
+      "forDate": "20180915",
+      "work": "normal",
+      "school": "normal",
+      "period": "allDay",
+      "from": "",
+      "raw": "明天未達停止上班及上課標準。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "蘭嶼鄉",
+      "forDate": "20180914",
+      "work": "stop",
+      "school": "stop",
+      "period": "afternoon",
+      "from": "",
+      "raw": "蘭嶼鄉:今天下午停止上班、停止上課。"
+    }
+  ]
+}

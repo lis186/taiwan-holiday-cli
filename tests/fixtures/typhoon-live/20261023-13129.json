@@ -1,0 +1,227 @@
+{
+  "pageDate": "20261023",
+  "updatedAt": "2026-10-23T20:21:50",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "基隆市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "臺北市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "新北市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "桃園市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "新竹市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "新竹縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "苗栗縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "臺中市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "彰化縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "雲林縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "南投縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "嘉義市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "嘉義縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "臺南市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "高雄市",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "屏東縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "宜蘭縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "花蓮縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "澎湖縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "連江縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "金門縣",
+      "scope": "",
+      "forDate": "20261023",
+      "work": "normal",
+      "school": "normal",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天照常上班、照常上課。"
+    }
+  ]
+}
