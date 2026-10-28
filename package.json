@@ -1,6 +1,6 @@
 {
   "name": "taiwan-holiday-cli",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Taiwan holiday CLI tool - Query Taiwan holidays from command line",
   "type": "module",
   "bin": {
