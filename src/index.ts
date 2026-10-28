@@ -11,6 +11,8 @@ export type { CacheOptions, CacheStatus } from './lib/cache.js';
 export {
   parseDate,
   parseRelativeDate,
+  getCurrentDate,
+  taipeiNow,
   isValidDate,
   formatDate,
   getWeekdayName,
@@ -25,3 +27,23 @@ export {
   WEEKDAY_NAMES,
   WEEKDAY_MAP,
 } from './types/holiday.js';
+
+// Typhoon days（天然災害停止上班上課）
+export type {
+  TyphoonArea,
+  TyphoonEvent,
+  TyphoonQueryResult,
+  TyphoonCityResult,
+  TyphoonVerdict,
+  TyphoonVerdictStatus,
+  TyphoonBasis,
+  TyphoonReason,
+} from './types/typhoon.js';
+export { TYPHOON_MIN_DATE, TYPHOON_ARCHIVE_SETTLE_DAYS } from './types/typhoon.js';
+export {
+  TyphoonService,
+  getTyphoonService,
+  evaluateTyphoon,
+  normalizeCity,
+} from './services/typhoon-service.js';
+export type { EvaluateOptions } from './services/typhoon-service.js';

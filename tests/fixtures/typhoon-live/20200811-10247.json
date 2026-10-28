@@ -1,0 +1,37 @@
+{
+  "pageDate": "20200811",
+  "updatedAt": "2020-08-11T23:58:05",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "澎湖縣",
+      "scope": "",
+      "forDate": "20200811",
+      "work": "stop",
+      "school": "stop",
+      "period": "morning",
+      "from": "",
+      "raw": "今天上午停止上班、停止上課。"
+    },
+    {
+      "city": "金門縣",
+      "scope": "",
+      "forDate": "20200811",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天停止上班、停止上課。"
+    },
+    {
+      "city": "金門縣",
+      "scope": "",
+      "forDate": "20200812",
+      "work": "normal",
+      "school": "normal",
+      "period": "allDay",
+      "from": "",
+      "raw": "明天照常上班、照常上課。"
+    }
+  ]
+}

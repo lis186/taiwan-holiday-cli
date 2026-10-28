@@ -16,6 +16,7 @@
 - 支援自然語言日期輸入（today, tomorrow, next monday...）
 - 查詢日期範圍內的假期
 - 計算工作天數統計
+- 查詢颱風假（天然災害停止上班上課）：今天、明天看 DGPA 即時頁，其他日期看歸檔（2001-07-30 起）
 - 支援多種輸出格式（simple, json, table）
 - 內建快取機制，離線可用
 - Shell 自動補全支援
@@ -106,6 +107,46 @@ holiday workdays 2026-01
 holiday between <start> <end>
 holiday between 2026-01-01 2026-01-31
 ```
+
+### 颱風假查詢
+
+```bash
+holiday typhoon                       # 今天（臺灣時間），讀 DGPA 即時頁
+holiday typhoon tomorrow -c 臺北市     # 明天，讀即時頁上今天公告的「明天」
+holiday typhoon 2024-10-31 -c 台北市   # 其他日期讀歸檔；台／臺視為相同
+holiday typhoon 2024-10-31 -f json    # 給腳本或 LLM 使用
+```
+
+**資料來源依日期而定：** 今天、明天直接讀 [DGPA 天然災害停止上班及上課情形](https://www.dgpa.gov.tw/typh/daily/nds.html)
+即時頁（每次查詢一個請求），結果標 `reason: "live"`；即時頁抓不到或格式不認得時，退回歸檔結果並註明。
+其他日期讀 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays) 歸檔。
+
+第一行就是答案，並標明能不能信：
+
+```
+2024-10-31 臺北市：停止上班（全天）、停止上課（全天）〔已定案〕
+```
+
+JSON 的頂層 `work`／`school` 是結論，`status` 為下列之一：
+
+| `status` | 意義 |
+|---|---|
+| `stopped` | 全縣市停止，時段見 `period`／`from` |
+| `conditional` | 只有部分子區域、部分學制或部分時段停止，要看 `cities[].rows` 判斷是否適用。未指定縣市時，只要有任何停止就是這個值 |
+| `normal` | 有公告且照常；即時頁目前沒有該縣市的公告（`reason: "live"`，之後仍可能公告）；或事件後超過 21 天仍無任何公告（`basis: "no_announcement"`） |
+| `unknown` | 無法判斷，**不可當成照常**。例如記錄無法解析、歸檔還沒收錄、即時頁還沒有明天的公告 |
+
+`basis` 說明依據：`own`（當日公告）、`forecast`（前一天公告的「明天」預告，可能被推翻）、`no_announcement`。
+
+`reason` 說明結果為何還可能改變，`null` 表示已定案：`live`（即時頁，當天仍可能更新）、`pending`（距今 21 天內，歸檔可能還沒收錄）、`source_not_ready`（當年度資料檔尚未產生）。
+
+注意事項：
+
+- **昨天到 21 天前是空窗。** 即時頁只有今天與明天，歸檔通常在事件後 1～5 天才收錄（最久 19 天），所以這段期間沒有紀錄時回 `unknown`。
+- 即時頁上沒列出的縣市，回「目前沒有公告」的 `normal`，但仍標 `reason: "live"`：之後仍可能公告。明天的公告通常在前一天晚上發布。
+- 即時頁格式不是官方承諾；請以各縣市政府公告為準。
+- 縣市名保留當時名稱（如改制前的臺北縣），不對應現行行政區。
+- 無法結構化的記錄會保留原文（`rows[].raw`），請以原文為準。
 
 ### 其他命令
 
@@ -236,6 +277,8 @@ MCP server 版本（Claude Desktop / Cursor 等 MCP client 適用）：[`taiwan-
 ## Data Source
 
 假期資料來自 [TaiwanCalendar](https://github.com/ruyut/TaiwanCalendar) 專案，感謝 [@ruyut](https://github.com/ruyut) 的維護。
+
+颱風假資料來自 [TaiwanTyphoonDays](https://github.com/lis186/TaiwanTyphoonDays)，由行政院人事行政總處公告整理而成，每日自動更新。
 
 ## Development
 

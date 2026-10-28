@@ -1,0 +1,117 @@
+{
+  "pageDate": "20260625",
+  "updatedAt": "2026-06-25T18:57:53",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "嘉義縣",
+      "scope": "竹崎鄉",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "14:00",
+      "raw": "竹崎鄉:今天下午02:00起停止上班、停止上課。"
+    },
+    {
+      "city": "嘉義縣",
+      "scope": "梅山鄉",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "14:00",
+      "raw": "梅山鄉:今天下午02:00起停止上班、停止上課。"
+    },
+    {
+      "city": "嘉義縣",
+      "scope": "番路鄉",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "14:00",
+      "raw": "番路鄉:今天下午02:00起停止上班、停止上課。"
+    },
+    {
+      "city": "嘉義縣",
+      "scope": "大埔鄉",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "14:00",
+      "raw": "大埔鄉:今天下午02:00起停止上班、停止上課。"
+    },
+    {
+      "city": "嘉義縣",
+      "scope": "阿里山鄉",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "14:00",
+      "raw": "阿里山鄉:今天下午02:00起停止上班、停止上課。"
+    },
+    {
+      "city": "高雄市",
+      "scope": "旗山區",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "12:00",
+      "raw": "旗山區:今天中午12:00起停止上班、停止上課。"
+    },
+    {
+      "city": "高雄市",
+      "scope": "美濃區",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "12:00",
+      "raw": "美濃區:今天中午12:00起停止上班、停止上課。"
+    },
+    {
+      "city": "高雄市",
+      "scope": "茂林區",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "16:00",
+      "raw": "茂林區:今天下午04:00起停止上班、停止上課。"
+    },
+    {
+      "city": "屏東縣",
+      "scope": "",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "from",
+      "from": "14:00",
+      "raw": "今天下午02:00起停止上班、停止上課。"
+    },
+    {
+      "city": "屏東縣",
+      "scope": "屏東縣春日鄉士文村",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "屏東縣春日鄉士文村:今天停止上班、停止上課。"
+    },
+    {
+      "city": "屏東縣",
+      "scope": "屏東縣霧臺鄉（WutaiTownship,PingtungCounty）",
+      "forDate": "20260625",
+      "work": "stop",
+      "school": "stop",
+      "period": "afternoon",
+      "from": "",
+      "raw": "屏東縣霧臺鄉（Wutai Township, Pingtung County）:今天下午停止上班、停止上課。"
+    }
+  ]
+}

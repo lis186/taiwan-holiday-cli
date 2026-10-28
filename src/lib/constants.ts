@@ -94,6 +94,7 @@ export const KNOWN_COMMANDS = [
   'month',
   'workdays',
   'between',
+  'typhoon',
   'cache',
   'config',
   'health',
@@ -117,3 +118,26 @@ export const MONTH_RANGE = {
  * 快取 key 匹配正則
  */
 export const CACHE_KEY_YEAR_PATTERN = /holidays_(\d{4})/;
+
+// =============================================================================
+// 颱風假（天然災害停止上班上課）
+// =============================================================================
+
+/**
+ * TaiwanTyphoonDays 資料基礎 URL。
+ *
+ * 主來源用 raw.githubusercontent（快取 5 分鐘），jsDelivr（邊緣快取最長 12 小時）只當備援：
+ * 颱風假資料每天更新，晚 12 小時看到等於答錯。
+ */
+export const TYPHOON_API_BASE_URL = 'https://raw.githubusercontent.com/lis186/TaiwanTyphoonDays/master/data';
+export const TYPHOON_API_FALLBACK_URL = 'https://cdn.jsdelivr.net/gh/lis186/TaiwanTyphoonDays/data';
+
+/**
+ * DGPA 天然災害停止上班及上課情形即時頁（靜態 UTF-8 HTML，格式非官方承諾）
+ */
+export const TYPHOON_LIVE_URL = 'https://www.dgpa.gov.tw/typh/daily/nds.html';
+
+/**
+ * 颱風假快取 key 前綴（與假期資料分開）
+ */
+export const TYPHOON_CACHE_KEY_PREFIX = 'typhoon_';

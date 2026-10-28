@@ -382,3 +382,24 @@ describe('date-parser', () => {
     });
   });
 });
+
+describe('Taiwan time', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('uses Asia/Taipei for "today" regardless of host time zone', () => {
+    vi.useFakeTimers();
+    // UTC 10/27 17:00 = 臺北 10/28 01:00
+    vi.setSystemTime(new Date('2026-10-27T17:00:00Z'));
+    expect(getCurrentDate().normalized).toBe('20261028');
+    expect(parseRelativeDate('today')?.normalized).toBe('20261028');
+    expect(parseRelativeDate('yesterday')?.normalized).toBe('20261027');
+  });
+
+  it('rolls the year over at Taipei midnight', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-12-31T16:30:00Z'));
+    expect(getCurrentYear()).toBe(2027);
+  });
+});

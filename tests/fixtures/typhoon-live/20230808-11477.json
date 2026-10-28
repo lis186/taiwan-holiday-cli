@@ -1,0 +1,27 @@
+{
+  "pageDate": "20230808",
+  "updatedAt": "2023-08-08T15:58:10",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "南投縣",
+      "scope": "仁愛鄉",
+      "forDate": "20230808",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "仁愛鄉:今天停止上班、停止上課。"
+    },
+    {
+      "city": "南投縣",
+      "scope": "仁愛鄉",
+      "forDate": "20230809",
+      "work": "normal",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "仁愛鄉:明天照常上班、停止上課。"
+    }
+  ]
+}

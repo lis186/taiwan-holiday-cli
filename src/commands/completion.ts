@@ -27,6 +27,7 @@ const COMMANDS = [
   'month',
   'workdays',
   'between',
+  'typhoon',
   'cache',
   'config',
   'health',
@@ -52,7 +53,7 @@ _holiday_completions() {
       COMPREPLY=( $(compgen -W "\${commands}" -- "\${cur}") )
       return 0
       ;;
-    check|range|between)
+    check|range|between|typhoon)
       COMPREPLY=( $(compgen -W "today tomorrow yesterday" -- "\${cur}") )
       return 0
       ;;
@@ -80,7 +81,7 @@ _holiday_completions() {
   esac
 
   if [[ "\${cur}" == -* ]]; then
-    COMPREPLY=( $(compgen -W "-f --format -h --help" -- "\${cur}") )
+    COMPREPLY=( $(compgen -W "-f --format -c --city -h --help" -- "\${cur}") )
     return 0
   fi
 }
@@ -108,6 +109,7 @@ _holiday() {
     'month:列出指定月份的假期'
     'workdays:計算指定月份的工作天數'
     'between:計算兩日期間的工作天數'
+    'typhoon:查詢指定日期的颱風假'
     'cache:管理快取'
     'config:設定管理'
     'health:系統健康檢查'
@@ -171,6 +173,7 @@ export function generateFishCompletion(): string {
     'complete -c holiday -n "__fish_use_subcommand" -a "month" -d "列出指定月份的假期"',
     'complete -c holiday -n "__fish_use_subcommand" -a "workdays" -d "計算指定月份的工作天數"',
     'complete -c holiday -n "__fish_use_subcommand" -a "between" -d "計算兩日期間的工作天數"',
+    'complete -c holiday -n "__fish_use_subcommand" -a "typhoon" -d "查詢指定日期的颱風假"',
     'complete -c holiday -n "__fish_use_subcommand" -a "cache" -d "管理快取"',
     'complete -c holiday -n "__fish_use_subcommand" -a "config" -d "設定管理"',
     'complete -c holiday -n "__fish_use_subcommand" -a "health" -d "系統健康檢查"',
@@ -179,6 +182,7 @@ export function generateFishCompletion(): string {
     '',
     '# Global options',
     'complete -c holiday -s f -l format -d "輸出格式" -a "simple json table"',
+    'complete -c holiday -s c -l city -d "颱風假縣市篩選" -x',
     'complete -c holiday -s h -l help -d "顯示說明"',
     '',
     '# cache subcommands',

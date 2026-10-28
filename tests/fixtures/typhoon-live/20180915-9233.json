@@ -1,0 +1,47 @@
+{
+  "pageDate": "20180915",
+  "updatedAt": "2018-09-15T23:59:02",
+  "noticeNone": false,
+  "areas": [
+    {
+      "city": "屏東縣",
+      "scope": "車城鄉",
+      "forDate": "20180915",
+      "work": "stop",
+      "school": "stop",
+      "period": "evening",
+      "from": "",
+      "raw": "車城鄉:今天晚上已達停止上班及上課標準。"
+    },
+    {
+      "city": "花蓮縣",
+      "scope": "",
+      "forDate": "20180915",
+      "work": "normal",
+      "school": "normal",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天未達停止上班及上課標準。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "",
+      "forDate": "20180915",
+      "work": "normal",
+      "school": "normal",
+      "period": "allDay",
+      "from": "",
+      "raw": "今天未達停止上班及上課標準。"
+    },
+    {
+      "city": "臺東縣",
+      "scope": "大武鄉",
+      "forDate": "20180916",
+      "work": "stop",
+      "school": "stop",
+      "period": "allDay",
+      "from": "",
+      "raw": "大武鄉:明天已達停止上班及上課標準。"
+    }
+  ]
+}
